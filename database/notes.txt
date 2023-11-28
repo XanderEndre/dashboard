@@ -1,0 +1,5 @@
+Recipes: A complete product
+Items: The individual items in the product
+Packagings: Bag, Tin, Pouch, cascade, Gatefold
+ItemTypes: Bag, Acetate, TIn, Pouch
+Decorations, Sticker-etc.
