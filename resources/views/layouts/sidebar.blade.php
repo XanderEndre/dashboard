@@ -196,7 +196,7 @@
                 <div class="px-3 pb-2 pt-5 text-xs font-semibold uppercase tracking-wider text-gray-500">
                     Orders
                 </div>
-                <x-navigation.nav-link :route="'warehouse.edit'" :label="'Orders'">
+                <x-navigation.nav-link :route="'warehouse.tenants.order.index'" :label="'Orders'">
                     <svg class="hi-outline hi-home inline-block h-5 w-5" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         aria-hidden="true">
@@ -218,9 +218,9 @@
                 </x-navigation.nav-link>
                 <x-navigation.dropdown label="Recipes" :dropdownName="'recipes'" :submenuItems="[
                     'Recipes' => 'warehouse.tenants.inventory.recipes.index',
-                    'Recipe Packaging' => 'warehouse.tenants.inventory.recipes.packaging.index',
-                    'Recipe Types' => 'warehouse.tenants.inventory.recipes.packaging.types.index',
-                    'Recipe Decorations' => 'warehouse.tenants.inventory.recipes.packaging.decorations.index',
+                    'Recipe Boxes' => 'warehouse.tenants.inventory.recipes.box.index',
+                    'Recipe Packaging Types' => 'warehouse.tenants.inventory.recipes.item.index',
+                    {{-- 'Recipe Decorations' => 'warehouse.tenants.inventory.recipes.packaging.decorations.index', --}}
                 ]">
                     <svg class="hi-outline hi-cog-8-tooth inline-block h-5 w-5" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"

@@ -2,13 +2,15 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Warehouse\Tenants\Recipe\TenantRecipeBoxPackagingController;
+use App\Http\Controllers\Warehouse\Tenants\Recipe\TenantRecipeItemPackagingController;
+use App\Http\Controllers\Warehouse\Tenants\Recipe\TenantRecipesController;
 use App\Http\Controllers\Warehouse\Tenants\TenantCustomersController;
 use App\Http\Controllers\Warehouse\Tenants\TenantInventoryController;
-use App\Http\Controllers\Warehouse\Tenants\TenantRecipesController;
+use App\Http\Controllers\Warehouse\Tenants\Order\TenantOrdersController;
 use App\Http\Controllers\Warehouse\Tenants\TenantVendorsController;
 use App\Http\Controllers\Warehouse\WarehouseController;
 use App\Http\Controllers\Warehouse\Users\WarehouseUsersController;
-use App\Models\Warehouse\Tenants\TenantInventory;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +30,8 @@ Route::get('/', function () {
 
 // Ensure that the user is authenticated for any of these routes
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/test', [DashboardController::class, 'test'])->name('test');
 
     // Profile Modification
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -54,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::prefix('warehouse')->name('warehouse.tenants.')->group(function () {
             Route::prefix('inventory')->name('inventory.')->group(function () {
+
                 Route::get('/', [TenantInventoryController::class, 'index'])->name('index');
                 Route::get('create', [TenantInventoryController::class, 'create'])->name('create');
                 Route::post('create', [TenantInventoryController::class, 'store'])->name('store');
@@ -65,27 +70,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     Route::post('create', [TenantRecipesController::class, 'store'])->name('store');
                     Route::delete('{id}', [TenantRecipesController::class, 'destroy'])->name('delete');
 
-                    Route::prefix('packaging')->name('packaging.')->group(function () {
-                        Route::get('/', [TenantInventoryController::class, 'index'])->name('index');
-                        Route::get('create', [TenantInventoryController::class, 'create'])->name('create');
-                        Route::post('create', [TenantInventoryController::class, 'store'])->name('store');
-                        Route::delete('{id}', [TenantInventoryController::class, 'destroy'])->name('delete');
+                    Route::prefix('packaging/box')->name('box.')->group(function () {
+                        Route::get('/', [TenantRecipeBoxPackagingController::class, 'index'])->name('index');
+                        Route::get('create', [TenantRecipeBoxPackagingController::class, 'create'])->name('create');
+                        Route::post('create', [TenantRecipeBoxPackagingController::class, 'store'])->name('store');
+                        Route::delete('{id}', [TenantRecipeBoxPackagingController::class, 'destroy'])->name('delete');
+                    });
 
-                        Route::prefix('types')->name('types.')->group(function () {
-                            Route::get('/', [TenantInventoryController::class, 'index'])->name('index');
-                            Route::get('create', [TenantInventoryController::class, 'create'])->name('create');
-                            Route::post('create', [TenantInventoryController::class, 'store'])->name('store');
-                            Route::delete('{id}', [TenantInventoryController::class, 'destroy'])->name('delete');
-                        });
-
-                        Route::prefix('decorations')->name('decorations.')->group(function () {
-                            Route::get('/', [TenantInventoryController::class, 'index'])->name('index');
-                            Route::get('create', [TenantInventoryController::class, 'create'])->name('create');
-                            Route::post('create', [TenantInventoryController::class, 'store'])->name('store');
-                            Route::delete('{id}', [TenantInventoryController::class, 'destroy'])->name('delete');
-                        });
+                    Route::prefix('packaging/item')->name('item.')->group(function () {
+                        Route::get('/', [TenantRecipeItemPackagingController::class, 'index'])->name('index');
+                        Route::get('create', [TenantRecipeItemPackagingController::class, 'create'])->name('create');
+                        Route::post('create', [TenantRecipeItemPackagingController::class, 'store'])->name('store');
+                        Route::delete('{id}', [TenantRecipeItemPackagingController::class, 'destroy'])->name('delete');
                     });
                 });
+            });
+
+            Route::prefix('order')->name('order.')->group(function () {
+
+                Route::get('/', [TenantOrdersController::class, 'index'])->name('index');
+                Route::get('create', [TenantOrdersController::class, 'create'])->name('create');
+                Route::post('create', [TenantOrdersController::class, 'store'])->name('store');
+                Route::delete('{id}', [TenantOrdersController::class, 'destroy'])->name('delete');
             });
         });
 

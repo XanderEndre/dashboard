@@ -2,6 +2,7 @@
 
 namespace App\Models\Warehouse\Tenants;
 
+use App\Models\Warehouse\Tenants\Order\TenantOrders;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,5 +34,10 @@ class TenantCustomer extends Model
     public function childrenCustomers() : HasMany
     {
         return $this->hasMany(TenantCustomer::class, 'parent_customer_id');
+    }
+
+    public function orders() : HasMany
+    {
+        return $this->hasMany(TenantOrders::class, 'order_id');
     }
 }

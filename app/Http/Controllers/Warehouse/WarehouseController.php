@@ -211,10 +211,10 @@ class WarehouseController extends Controller
             $this->user->active_schema = $warehouse->id;
             $this->user->save();
 
-            dispatch(new WriteAuditLogJob('created', 'Added user \'' . $this->user->name . '\' to the warehouse \'' . $warehouse->name . '\'', $this->user->id, $warehouse->schema_name));
+            // dispatch(new WriteAuditLogJob('created', 'Added user \'' . $this->user->name . '\' to the warehouse \'' . $warehouse->name . '\'', $this->user->id, $warehouse->schema_name));
 
             // dispatch(new AddWarehouseUser($this->user, $warehouse, null));
-            dispatch(new WriteAuditLogJob('created', 'Created Warehouse \'' . $warehouse->name . '\'', $this->user->id, $warehouse->schema_name));
+            // dispatch(new WriteAuditLogJob('created', 'Created Warehouse \'' . $warehouse->name . '\'', $this->user->id, $warehouse->schema_name));
 
             // Maybe dispatch an event after completion
             // event(new CreateWarehouseEvent($this->tenantData));
@@ -304,7 +304,7 @@ class WarehouseController extends Controller
 
 
             // Clear the user's active schema
-            $this->user->active_schema = null;
+            // $this->user->active_schema = null;
             $this->user->save();
 
             // dispatch(new WriteAuditLogJob('deleted', 'Deleted Warehouse \'' . $warehouse->name . '\'', $this->user->id, $warehouse->schema_name));

@@ -120,7 +120,7 @@
                                                     </span>
 
                                                 </td>
-                                                <td class="p-3 text-right">
+                                                <td class="p-3 flex justify-end space-x-2">
                                                     @if ($user->active_schema != $warehouse->id)
                                                         <form action="{{ route('warehouse.activate', $warehouse->id) }}"
                                                             method="POST">

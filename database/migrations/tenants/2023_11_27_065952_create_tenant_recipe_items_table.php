@@ -10,18 +10,21 @@ return new class extends Migration {
      */
     public function up() : void
     {
-        Schema::create('tenant_order_details', function (Blueprint $table) {
+        Schema::create('tenant_recipe_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Warehouse\Tenants\Order\TenantOrders::class, 'order_id')
-                ->constrained('tenant_orders')
+            $table->foreignIdFor(\App\Models\Warehouse\Tenants\Recipe\TenantRecipes::class, 'recipe_id')
+                ->constrained('tenant_recipes')
                 ->comment('Foreign key referencing the customer');
             $table->foreignIdFor(\App\Models\Warehouse\Tenants\TenantInventory::class, 'item_id')
                 ->constrained('tenant_inventories')
                 ->comment('Foreign key referencing the customer');
-            $table->bigInteger('quantity');
+            $table->foreignIdFor(\App\Models\Warehouse\Tenants\Recipe\TenantRecipeItemPackagings::class, 'packaging_id')
+                ->constrained('tenant_recipe_item_packagings')
+                ->comment('Foreign key referencing the customer');
+
+
             $table->timestamps();
             $table->softDeletes();
-
         });
     }
 
@@ -30,6 +33,6 @@ return new class extends Migration {
      */
     public function down() : void
     {
-        Schema::dropIfExists('tenant_order_details');
+        Schema::dropIfExists('tenant_recipe_items');
     }
 };

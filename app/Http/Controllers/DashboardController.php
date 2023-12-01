@@ -35,5 +35,10 @@ class DashboardController extends Controller
         return view('dashboard', ['warehouse' => $this->warehouse, 'user' => $this->user]);
     }
 
+    public function test()
+    {
+        return view('test', ['warehouse' => $this->warehouse]);
+    }
+
 
 }
