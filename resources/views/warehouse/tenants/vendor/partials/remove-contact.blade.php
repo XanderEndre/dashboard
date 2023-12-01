@@ -16,7 +16,7 @@
     </div>
 
     <!-- END Placeholder -->
-    <form method="post" action="{{ route('warehouse.vendor.address.remove', $vendor) }}">
+    <form method="post" action="{{ route('warehouse.tenants.vendor.contact.remove', $vendor) }}">
         @csrf
         @method('delete')
         <!-- Modal Backdrop -->
@@ -34,10 +34,10 @@
                 <div class="flex justify-between items-center py-4 px-5 bg-flash-white dark:bg-gray-700/50">
                     <div>
                         <h3 class="font-semibold mb-1">
-                            Remove Address
+                            Remove Contact
                         </h3>
                         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                            Remove this address from the vendor
+                            Remove this contact from the vendor
                         </h4>
                     </div>
                     <div class="-my-4">
@@ -56,15 +56,15 @@
 
                 <div class="p-5 grow">
                     <p>
-                        This will remove any address connections associated to this vendor.
+                        This will remove any contact connections associated to this vendor.
                     </p>
                     {{-- <input type="hidden" name="vendor_id" value="{{ $vendor->id }}" /> --}}
-                    <input type="hidden" name="address_id" value="{{ $address->id }}" />
+                    <input type="hidden" name="contact_id" value="{{ $contact->id }}" />
                 </div>
                 <!-- Footer -->
                 <div class="text-right space-x-1 py-4 px-5 bg-gray-50 dark:bg-gray-700/50">
                     <x-buttons.danger-button type="submit">
-                        Remove Address
+                        Remove Contact
                     </x-buttons.danger-button>
                     <x-buttons.secondary-button
                         x-on:click="open = false; document.body.classList.remove('overflow-hidden')" type="button">

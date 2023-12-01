@@ -280,7 +280,7 @@
                 <div class="px-3 pb-2 pt-5 text-xs font-semibold uppercase tracking-wider text-gray-500">
                     Vendors
                 </div>
-                <x-navigation.nav-link :route="'warehouse.vendor.index'" :label="'Vendors'">
+                <x-navigation.nav-link :route="'warehouse.tenants.vendor.index'" :label="'Vendors'">
                     <svg class="bi bi-shop inline-block w-5 h-5" xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                         <path

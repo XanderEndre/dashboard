@@ -4,9 +4,10 @@ namespace App\Models\Warehouse\Tenants;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TenantContactType extends Model
+class TenantContactable extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -19,17 +20,9 @@ class TenantContactType extends Model
         'is_active'
     ];
 
-    public function formatted()
+    public function contactable() : MorphToMany
     {
-        $lines = [
-            $this->first_name,
-            $this->last_name,
-            '(' . $this->email . ')'
-        ];
-
-        // Filter out any empty lines
-        $lines = array_filter($lines);
-
-        return implode("\n", $lines);
+        return $this->morphToMany(TenantVendor::class, 'contactable');
     }
+
 }

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Warehouse\Tenants;
 
 use App\Jobs\WriteAuditLogJob;
+use App\Models\Warehouse\Tenants\TenantAddressable;
+use App\Models\Warehouse\Tenants\TenantAddressType;
+use App\Models\Warehouse\Tenants\TenantContactType;
 use App\Models\Warehouse\Tenants\TenantVendor;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
@@ -12,6 +15,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class TenantVendorsController extends Controller
 {
@@ -47,7 +51,7 @@ class TenantVendorsController extends Controller
             ->paginate(10); // 15 is the number of items per page
 
 
-        return view('warehouse.vendor.index', ['vendors' => $vendors, 'warehouse' => $this->warehouse]);
+        return view('warehouse.tenants.vendor.index', ['vendors' => $vendors, 'warehouse' => $this->warehouse]);
     }
 
     /**
@@ -55,17 +59,8 @@ class TenantVendorsController extends Controller
      */
     public function create()
     {
-        // Fetch Address
-        // Fetch Contact Information
-        //    $addresses = Address::where('warehouse_id', $this->warehouse->id)->latest()->get();
-        //     $contactInformation = Contact::where('warehouse_id', $this->warehouse->id)->latest()->get();
-        //     $VendorInformation = Vendor::where('warehouse_id', $this->warehouse->id)->latest()->get();
 
-        // $addressOptions = $addresses->mapWithKeys(fn ($address) => [$address->id => $address->formatted()])->toArray();
-        // $contactOptions = $contactInformation->mapWithKeys(fn ($contact) => [$contact->id => $contact->formatted()])->toArray();
-        // $VendorOptions = $VendorInformation->mapWithKeys(fn ($Vendor) => [$Vendor->id => $Vendor->formatted()])->toArray();
-
-        return view("warehouse.vendor.create", ['warehouse' => $this->warehouse]);
+        return view("warehouse.tenants.vendor.create", ['warehouse' => $this->warehouse]);
     }
 
 
@@ -111,7 +106,7 @@ class TenantVendorsController extends Controller
             dispatch(new WriteAuditLogJob('created', 'Created Vendor \'' . $Vendor->name . '\'', $this->user->id, $this->warehouse));
 
             DB::commit();
-            return redirect()->route('warehouse.vendor.index')->with('success', "Successfully created a new Vendor");
+            return redirect()->route('warehouse.tenants.vendor.index')->with('success', "Successfully created a new Vendor");
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to create Vendor. Error: ' . $e->getMessage())->withInput();
@@ -153,10 +148,181 @@ class TenantVendorsController extends Controller
             // $Vendor->delete();
 
             DB::commit();
-            return redirect()->route('warehouse.vendor.index')->with('success', "Successfully removed the Vendor from this warehouse.");
+            return redirect()->route('warehouse.tenants.vendor.index')->with('success', "Successfully removed the Vendor from this warehouse.");
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to remove Vendor. Error: ' . $e->getMessage())->withInput();
         }
     }
+
+    /**
+     * Display the specified resource.
+     */
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Request $request, string $id)
+    {
+        // Set the connection to the tenant's schema
+        $this->tenantService->setConnection($this->warehouse);
+
+        // Find the Vendor in the current schema
+        $vendor = TenantVendor::on('tenant')->find($id);
+
+        if (! $vendor) {
+            return redirect()->back()->with('error', 'The requested vendor does not exist in this warehouse.');
+        }
+
+        $addresses = TenantAddressType::on('tenant')->latest()->get();
+        $contacts = TenantContactType::on('tenant')->latest()->get();
+
+        $addressOptions = $addresses->mapWithKeys(fn ($address) => [$address->id => $address->formatted()])->toArray();
+        $contactOptions = $contacts->mapWithKeys(fn ($contact) => [$contact->id => $contact->formatted()])->toArray();
+
+
+        // If the vendor exists and belongs to the warehouse, show the vendor
+        return view('warehouse.tenants.vendor.show', ['vendor' => $vendor, 'warehouse' => $this->warehouse, 'addressOptions' => $addressOptions, 'contactOptions' => $contactOptions]);
+    }
+
+
+
+    public function storeAddress(Request $request, string $id)
+    {
+        try {
+            $address = $this->validateAndCreateOrFetchAddress($request, $id);
+
+            if ($address) {
+                return redirect()->back()->with('success', "Successfully added new address");
+            } else {
+                // Handle the scenario where no address was created or found
+                return redirect()->back()->with('error', 'Failed to add address.');
+            }
+        } catch (\Exception $e) {
+            // Handle exceptions thrown from the private method
+            return redirect()->back()->with('error', 'Failed to add address. Error: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    private function validateAndCreateOrFetchAddress($request, string $id)
+    {
+        // Fetch the vendor
+        $this->tenantService->setConnection($this->warehouse);
+
+        $vendor = TenantVendor::on('tenant')->find($id);
+        if (! $vendor) {
+            throw new \Exception("Vendor not found.");
+        }
+
+        $addressChoice = $request->input('address_choice');
+
+        if ($addressChoice === 'create') {
+            $validatedData = $request->validate([
+                'address_type' => ['required', Rule::in(TenantAddressType::$addressType)],
+                'address' => 'required|string|max:255',
+                'address_two' => 'nullable|string|max:255',
+                'country' => 'required|string|max:255',
+                'city' => 'required|string|max:255',
+                'state' => 'required|string|max:255',
+                'zipcode' => 'required|string|max:10',
+                'phone_number' => 'required|string',
+                'email' => 'required|string'
+            ]);
+
+            DB::beginTransaction();
+
+            try {
+
+                // Create a new address
+                $address = TenantAddressType::on('tenant')->create($validatedData);
+
+                // Take the address id, vendor id, and the type and merge it into the TenantAddressable table
+
+                $addressData = array_merge([
+                    'addressable_id' => $vendor->id,
+                    'addressable_type' => get_class($vendor),
+                    'address_id' => $address->id
+                ]);
+
+                // Create the new address
+                TenantAddressable::on('tenant')->create($addressData);
+
+                // $vendor->addresses()->attach($address->id, ['addressable_type' => get_class($vendor)]);
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Failed to create address. Error: ' . $e->getMessage())->withInput();
+            }
+
+            return $address;
+
+        } elseif ($addressChoice === 'select') {
+            $selectedAddressId = $request->input('selected_address_id');
+            $address = TenantAddressType::on('tenant')->findOrFail($selectedAddressId); // This will throw an exception if the address is not found
+
+            // Check if the vendor has already this address attached to avoid duplication
+            if (! $vendor->addresses->contains($address->id)) {
+                $vendor->addresses()->attach($address->id);
+            }
+
+            return $address;
+        }
+
+        return null; // If no address choice is made, or fields are not filled
+    }
+
+    public function removeAddress(Request $request, string $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->tenantService->setConnection($this->warehouse);
+
+
+            // Get the current vendor
+            $selectedAddressId = $request->input('address_id');
+
+            // Ensure the address belongs to the warehouse and vendor
+            $address = TenantAddressable::on('tenant')->find($selectedAddressId);
+            if (! $address) {
+                throw new \Exception("Vendor not found.");
+            }
+
+            // Grabt hge vendor and deattach
+
+            $vendor = TenantVendor::on('tenant')->find($id);
+            if (! $vendor) {
+                throw new \Exception("Vendor not found.");
+            }
+            // Use the address ID to detach the address
+            $vendor->addresses()->detach($address->id);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', "Successfully removed address");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to remove address. Error: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    public function storeContact(Request $request, string $id)
+    {
+        try {
+            $address = $this->validateAndCreateOrFetchAddress($request, $id);
+
+            if ($address) {
+                return redirect()->back()->with('success', "Successfully added new address");
+            } else {
+                // Handle the scenario where no address was created or found
+                return redirect()->back()->with('error', 'Failed to add address.');
+            }
+        } catch (\Exception $e) {
+            // Handle exceptions thrown from the private method
+            return redirect()->back()->with('error', 'Failed to add address. Error: ' . $e->getMessage())->withInput();
+        }
+    }
+
+
 }

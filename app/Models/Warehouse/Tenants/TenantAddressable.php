@@ -4,28 +4,24 @@ namespace App\Models\Warehouse\Tenants;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TenantAddressType extends Model
+class TenantAddressable extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-
-        'address_type',
-        'address',
-        'address_two',
-        'city',
-        'state',
-        'country',
-        'zipcode',
-        'phone_number',
-        'email'
+        'addressable_id',
+        'addressable_type',
+        'address_id'
+  
     ];
 
-    public static array $addressType = ['Delivery Address', 'Billing Address'] ?? null;
+    public function addressable() : MorphToMany
+    {
+        return $this->morphToMany(TenantVendor::class, 'addressable');
+    }
 
 
     public function formatted()

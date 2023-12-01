@@ -1,6 +1,6 @@
 <!-- Modals: With Form -->
 <div x-data="{ openAddress: @json($errors->any()) }">
-{{-- <div x-data="{ openAddress: false }"> --}}
+    {{-- <div x-data="{ openAddress: false }"> --}}
 
     <!-- Placeholder -->
     <div>
@@ -12,7 +12,7 @@
         <!-- END Modal Toggle Button -->
     </div>
     <!-- END Placeholder -->
-    <form method="post" action="{{ route('warehouse.vendor.address.store', $vendor) }}">
+    <form method="post" action="{{ $route }}">
         @csrf
         <!-- Modal Backdrop -->
         <div x-cloak x-show="openAddress" x-transition:enter="transition ease-out duration-200"
@@ -32,7 +32,7 @@
                             Create Address
                         </h3>
                         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                            Create or select a new address for this vendor
+                            Create or select a new address for this {{ $title }}
                         </h4>
                     </div>
                     <div class="-my-4">
@@ -50,8 +50,7 @@
                 </div>
                 <!-- Body -->
                 <div class="p-5 grow">
-                    {{-- <input type="hidden" name="redirect_to" value="{{ url()->previous() }}"> --}}
-                    {{-- <input type="hidden" name="vendor_id" value="{{ $vendor->id }}"> --}}
+
 
 
                     <div x-data="{ choice: '{{ old('address_choice', null) }}' }">
@@ -71,7 +70,7 @@
                         <input type="hidden" name="address_choice" x-bind:value="choice">
 
                         <div x-show="choice === 'create'" class="mt-4">
-                            @include('warehouse.partials.create-address-form')
+                            @include('warehouse.tenants.partials.create-address-form')
                         </div>
 
                         <div x-show="choice === 'select'" class="mt-2">

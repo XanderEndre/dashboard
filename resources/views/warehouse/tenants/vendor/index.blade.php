@@ -4,7 +4,7 @@
 
         <x-cards.card>
             <x-cards.header :title="'Vendors'" :description="'A list of all vendors in the warehouse'">
-                <x-buttons.link-button href="{{ route('warehouse.vendor.create') }}">Create
+                <x-buttons.link-button href="{{ route('warehouse.tenants.vendor.create') }}">Create
                     Vendor</x-buttons.link-button>
             </x-cards.header>
             <x-cards.body>
@@ -45,8 +45,9 @@
                                     @endif
                                 </x-tables.td>
                                 <x-tables.td class="text-right flex space-x-2 items-center justify-end">
-                                    {{-- <x-buttons.tooltip :tooltip="'View Vendor'" :position="'top'">
-                                        <x-buttons.link-button href="{{ route('warehouse.vendor.show', $vendor) }}">
+                                    <x-buttons.tooltip :tooltip="'View Vendor'" :position="'top'">
+                                        <x-buttons.link-button
+                                            href="{{ route('warehouse.tenants.vendor.show', $vendor) }}">
                                             <svg class="hi-mini hi-eye inline-block w-5 h-5"
                                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                 fill="currentColor" aria-hidden="true">
@@ -56,10 +57,10 @@
                                                     clip-rule="evenodd" />
                                             </svg>
                                         </x-buttons.link-button>
-                                    </x-buttons.tooltip> --}}
+                                    </x-buttons.tooltip>
                                     <x-buttons.tooltip :tooltip="'Delete Vendor'" :position="'left'">
                                         <div>
-                                            @include('warehouse.vendor.partials.delete-vendor-form')
+                                            @include('warehouse.tenants.vendor.partials.delete-vendor-form')
                                         </div>
                                     </x-buttons.tooltip>
 

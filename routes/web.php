@@ -57,6 +57,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         Route::prefix('warehouse')->name('warehouse.tenants.')->group(function () {
+
+            Route::prefix('vendor')->name('vendor.')->group(function () {
+                Route::get('/', [TenantVendorsController::class, 'index'])->name('index');
+                Route::get('create', [TenantVendorsController::class, 'create'])->name('create');
+                Route::post('create', [TenantVendorsController::class, 'store'])->name('store');
+                Route::delete('{id}', [TenantVendorsController::class, 'destroy'])->name('delete');
+                Route::get('{vendor}', [TenantVendorsController::class, 'show'])->name('show');
+                Route::post('{vendor}/address', [TenantVendorsController::class, 'storeAddress'])->name('address.store');
+                Route::post('{vendor}/contact', [TenantVendorsController::class, 'storeContact'])->name('contact.store');
+                Route::delete('{vendor}/address', [TenantVendorsController::class, 'removeAddress'])->name('address.remove');
+                Route::delete('{vendor}/contact', [TenantVendorsController::class, 'removeContact'])->name('contact.remove');
+            });
+
             Route::prefix('inventory')->name('inventory.')->group(function () {
 
                 Route::get('/', [TenantInventoryController::class, 'index'])->name('index');
@@ -95,9 +108,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             });
         });
 
-        Route::prefix('warehouse/vendors')->name('warehouse.vendor.')->group(function () {
-            Route::get('/', [WarehouseController::class, 'index'])->name('index');
-        });
 
         Route::prefix('warehouse/categories')->name('warehouse.inventory.categories.')->group(function () {
             Route::get('/', [WarehouseController::class, 'index'])->name('index');
@@ -115,12 +125,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('{id}', [TenantCustomersController::class, 'destroy'])->name('delete');
         });
 
-        Route::prefix('warehouse/vendor')->name('warehouse.vendor.')->group(function () {
-            Route::get('/', [TenantVendorsController::class, 'index'])->name('index');
-            Route::get('create', [TenantVendorsController::class, 'create'])->name('create');
-            Route::post('create', [TenantVendorsController::class, 'store'])->name('store');
-            Route::delete('{id}', [TenantVendorsController::class, 'destroy'])->name('delete');
-        });
+
 
 
 

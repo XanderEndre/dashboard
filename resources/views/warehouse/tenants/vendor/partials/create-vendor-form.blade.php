@@ -1,6 +1,6 @@
 <section>
 
-    <form method="post" action="{{ route('warehouse.vendor.store') }}">
+    <form method="post" action="{{ route('warehouse.tenants.vendor.store') }}">
         @csrf
         <x-cards.card>
             <x-cards.header :title="'Create a Vendor'" :description="'Enter the details of your new vendor'" />
