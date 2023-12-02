@@ -125,7 +125,7 @@ class TenantOrdersController extends Controller
             dispatch(new WriteAuditLogJob('created', 'Created Orders \'' . $order->name . '\'', $this->user->id, $this->warehouse));
 
             DB::commit();
-            return redirect()->route('warehouse.tenants.orders.index')->with('success', "Successfully created a new Orders");
+            return redirect()->route('warehouse.tenants.order.index')->with('success', "Successfully created a new Orders");
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to create Orders. Error: ' . $e->getMessage())->withInput();

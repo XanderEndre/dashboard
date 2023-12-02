@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Warehouse\Tenants;
 
 use App\Jobs\WriteAuditLogJob;
 use App\Models\Warehouse\Tenants\TenantInventory;
+use App\Models\Warehouse\Tenants\TenantVendor;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class TenantInventoryController extends Controller
 {
@@ -54,17 +56,20 @@ class TenantInventoryController extends Controller
      */
     public function create()
     {
-        // Fetch Address
-        // Fetch Contact Information
-        //    $addresses = Address::where('warehouse_id', $this->warehouse->id)->latest()->get();
-        //     $contactInformation = Contact::where('warehouse_id', $this->warehouse->id)->latest()->get();
-        //     $InventoryItemInformation = InventoryItem::where('warehouse_id', $this->warehouse->id)->latest()->get();
+        // Set the connection to the tenant's schema
+        $this->tenantService->setConnection($this->warehouse);
 
-        // $addressOptions = $addresses->mapWithKeys(fn ($address) => [$address->id => $address->formatted()])->toArray();
-        // $contactOptions = $contactInformation->mapWithKeys(fn ($contact) => [$contact->id => $contact->formatted()])->toArray();
-        // $InventoryItemOptions = $InventoryItemInformation->mapWithKeys(fn ($InventoryItem) => [$InventoryItem->id => $InventoryItem->formatted()])->toArray();
+        // fetch a list of all vendors
+        $vendorOptions = TenantVendor::on('tenant')->latest()->get();
+        $itemOptions = TenantInventory::on('tenant')->latest()->get();
 
-        return view("warehouse.tenants.inventory.create", ['warehouse' => $this->warehouse]);
+        $vendors = $vendorOptions->mapWithKeys(fn ($vendor) => [$vendor->id => $vendor->formatted()])->toArray();
+        $items = $itemOptions->mapWithKeys(fn ($item) => [$item->id => $item->formatted()])->toArray();
+
+        // fetch a list of all inventory items 
+        // $TenantInventory = TenantInventory::on('tenant')->create($data);
+
+        return view("warehouse.tenants.inventory.create", ['warehouse' => $this->warehouse, 'vendors' => $vendors, 'items' => $items]);
     }
 
 
@@ -74,26 +79,6 @@ class TenantInventoryController extends Controller
     public function store(Request $request)
     {
 
-        // Start by validating the inventoryitem details which are always required
-        $InventoryItemData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'vendor_name' => 'required|string|max:255',
-            // 'item_description' => 'required|string',
-            'cost' => 'required|numeric',
-            'is_active' => 'required|boolean'
-        ]);
-
-        // Validate and possibly create/fetch address and contact based on the request
-
-
-        // Merging additional data
-        $data = array_merge($InventoryItemData, [
-            'sub_item_id' => null,
-            'vendor_id' => null,
-            'warehouse_id' => $this->warehouse->id,
-        ]);
-
         DB::beginTransaction();
 
         try {
@@ -101,9 +86,35 @@ class TenantInventoryController extends Controller
             // Set the connection to the tenant's schema
             $this->tenantService->setConnection($this->warehouse);
 
-            $InventoryItem = TenantInventory::on('tenant')->create($data);
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'required|string|max:255',
+                'vendor_item_name' => 'required|string|max:255',
+                'cost' => 'required|numeric',
+                'item_type' => ['required', Rule::in(TenantInventory::$itemType)],
+                'item_dirty_level' => ['required', Rule::in(TenantInventory::$itemDirtyLevel)],
+                'item_trk_option' => ['required', Rule::in(TenantInventory::$itemTrkOption)],
+                'item_valuation_method' => ['required', Rule::in(TenantInventory::$itemValuationMethod)],
+                'item_unit_of_measure' => ['required', Rule::in(TenantInventory::$itemUnitOfMeasure)],
+                'item_purchase_tax_option' => ['required', Rule::in(TenantInventory::$itemPurchaseTaxOptions)],
+                // 'sub_item_id' => 'exists:tenant.tenant_inventories,id',
+                // 'vendor_id' => 'exists:tenant.tenant_vendor,id',
+                'is_active' => 'required|boolean'
+            ]);
 
-            dispatch(new WriteAuditLogJob('created', 'Created Inventory Item \'' . $InventoryItem->name . '\'', $this->user->id, $this->warehouse));
+            // dd($request);
+            $subItemId = $this->validateAndFetchSubtituteItem($request);
+            $vendorId = $this->validateAndFetchVendor($request);
+
+            $data = array_merge($validatedData, [
+                'sub_item_id' => $subItemId ? $subItemId->id : null,
+                'vendor_id' => $vendorId ? $vendorId->id : null,
+            ]);
+            // dd($data);
+
+            $TenantInventory = TenantInventory::on('tenant')->create($data);
+
+            dispatch(new WriteAuditLogJob('created', 'Created Inventory Item \'' . $TenantInventory->name . '\'', $this->user->id, $this->warehouse));
 
             DB::commit();
             return redirect()->route('warehouse.tenants.inventory.index')->with('success', "Successfully created a new Inventory Item");
@@ -112,6 +123,51 @@ class TenantInventoryController extends Controller
             return redirect()->back()->with('error', 'Failed to create Inventory Item. Error: ' . $e->getMessage())->withInput();
         }
     }
+
+    private function validateAndFetchSubtituteItem($request)
+    {
+        // Determine the contact choice
+        $parentItemChoice = $request->input('parent_item_choice');
+
+        // Handle creation of a new contact
+        if ($parentItemChoice === 'select') {
+            $selectedParentItemId = $request->input('sub_item_id');
+            if ($selectedParentItemId) {
+                $item = TenantInventory::on('tenant')->find($selectedParentItemId);
+                if (! $item) {
+                    throw new \Exception('Selected substitute item not found.');
+                }
+                return $item;
+            }
+        }
+        return null;
+    }
+
+    private function validateAndFetchVendor($request)
+    {
+
+        // Determine the contact choice
+        $vendorChoice = $request->input('vendor_choice');
+
+        // Handle creation of a new contact
+        if ($vendorChoice === 'select') {
+
+            $selectedVendorId = $request->input('selected_vendor_id');
+            if ($selectedVendorId) {
+
+                $vendor = TenantVendor::on('tenant')->find($selectedVendorId);
+                // dd($selectedVendorId, $vendor);
+                // dd($selectedVendorId);
+                if (! $vendor) {
+                    throw new \Exception('Selected vendor is not found.');
+                }
+                return $vendor;
+            }
+        }
+        return null;
+    }
+
+
 
 
     /**
@@ -129,26 +185,21 @@ class TenantInventoryController extends Controller
             $this->tenantService->setConnection($this->warehouse);
 
             // dd($id);
-            // Find the InventoryItem in the current schema
-            $inventoryitem = TenantInventory::on('tenant')->find($id);
+            // Find the TenantInventory in the current schema
+            $tenantinventory = TenantInventory::on('tenant')->find($id);
 
-            if (! $inventoryitem) {
+            if (! $tenantinventory) {
                 return redirect()->back()->with('error', 'Failed to remove Inventory Item. Error: That does not exist in this warehouse.');
             }
 
+            // Additional logging to check if the TenantInventory instance is correct
+            dispatch(new WriteAuditLogJob('deleted', 'Removed Inventory Item \'' . $tenantinventory->name . '\'', $this->user->id, $this->warehouse));
+            $tenantinventory->delete();
 
-            // Additional logging to check if the InventoryItem instance is correct
-
-            dispatch(new WriteAuditLogJob('deleted', 'Removed Inventory Item \'' . $inventoryitem->name . '\'', $this->user->id, $this->warehouse));
-            $inventoryitem->delete();
-
-            Log::info("InventoryItem deleted: " . $inventoryitem->id);
-
-
-            // $InventoryItem->delete();
+            Log::info("TenantInventory deleted: " . $tenantinventory->id);
 
             DB::commit();
-            return redirect()->route('warehouse.tenants.inventory.index')->with('success', "Successfully removed the InventoryItem from this warehouse.");
+            return redirect()->route('warehouse.tenants.inventory.index')->with('success', "Successfully removed the TenantInventory from this warehouse.");
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to remove Inventory Item. Error: ' . $e->getMessage())->withInput();

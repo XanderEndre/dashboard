@@ -15,12 +15,18 @@ class TenantAddressable extends Model
         'addressable_id',
         'addressable_type',
         'address_id'
-  
+
     ];
 
-    public function addressable() : MorphToMany
+    public function vendors() : MorphToMany
     {
         return $this->morphToMany(TenantVendor::class, 'addressable');
+    }
+
+
+    public function customers() : MorphToMany
+    {
+        return $this->morphToMany(TenantCustomer::class, 'addressable');
     }
 
 

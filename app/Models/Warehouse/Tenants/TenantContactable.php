@@ -20,9 +20,14 @@ class TenantContactable extends Model
         'is_active'
     ];
 
-    public function contactable() : MorphToMany
+    public function vendors() : MorphToMany
     {
         return $this->morphToMany(TenantVendor::class, 'contactable');
+    }
+
+    public function customers() : MorphToMany
+    {
+        return $this->morphToMany(TenantCustomer::class, 'contactable');
     }
 
 }

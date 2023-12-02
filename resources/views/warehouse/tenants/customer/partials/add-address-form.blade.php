@@ -12,7 +12,7 @@
         <!-- END Modal Toggle Button -->
     </div>
     <!-- END Placeholder -->
-    <form method="post" action="{{ route('warehouse.customer.address.store') }}">
+    <form method="post" action="{{ route('warehouse.tenants.customer.address.store', $customer) }}">
         @csrf
         <!-- Modal Backdrop -->
         <div x-cloak x-show="openAddress" x-transition:enter="transition ease-out duration-200"
@@ -71,7 +71,7 @@
                         <input type="hidden" name="address_choice" x-bind:value="choice">
 
                         <div x-show="choice === 'create'" class="mt-4">
-                            @include('warehouse.partials.create-address-form')
+                            @include('warehouse.tenants.partials.create-address-form')
                         </div>
 
                         <div x-show="choice === 'select'" class="mt-2">

@@ -13,7 +13,7 @@
         <!-- END Modal Toggle Button -->
     </div>
     <!-- END Placeholder -->
-    <form method="post" action="{{ route('warehouse.customer.contact.store') }}">
+    <form method="post" action="{{ route('warehouse.tenants.customer.contact.store', $customer) }}">
         @csrf
         <!-- Modal Backdrop -->
         <div x-cloak x-show="openContact" x-transition:enter="transition ease-out duration-200"
@@ -72,7 +72,7 @@
                         <input type="hidden" name="contact_choice" x-bind:value="choice">
 
                         <div x-show="choice === 'create'" class="mt-4">
-                            @include('warehouse.partials.create-contact-form')
+                            @include('warehouse.tenants.partials.create-contact-form')
                         </div>
 
                         <div x-show="choice === 'select'" class="mt-2">

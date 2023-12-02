@@ -4,6 +4,7 @@ namespace App\Models\Warehouse\Tenants;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -32,5 +33,25 @@ class TenantVendor extends Model
     public function contacts() : MorphToMany
     {
         return $this->morphToMany(TenantContactType::class, 'contactable', 'tenant_contactables', 'contactable_id', 'contact_id');
+    }
+
+    
+    public function items() : HasMany
+    {
+        return $this->HasMany(TenantInventory::class);
+    }
+
+
+    public function formatted()
+    {
+        $lines = [
+            $this->name,
+            "(" . ($this->is_active ? "enabled" : "disabled") . ")"
+        ];
+
+        // Filter out any empty lines
+        $lines = array_filter($lines);
+
+        return implode("\n", $lines);
     }
 }

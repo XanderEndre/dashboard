@@ -16,7 +16,7 @@
     </div>
 
     <!-- END Placeholder -->
-    <form method="post" action="{{ route('warehouse.customer.address.remove') }}">
+    <form method="post" action="{{ route('warehouse.tenants.customer.address.remove', $customer) }}">
         @csrf
         @method('delete')
         <!-- Modal Backdrop -->
@@ -58,7 +58,6 @@
                     <p>
                         This will remove any address connections associated to this customer.
                     </p>
-                    <input type="hidden" name="customer_id" value="{{ $customer->id }}" />
                     <input type="hidden" name="address_id" value="{{ $address->id }}" />
                 </div>
                 <!-- Footer -->

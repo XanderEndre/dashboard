@@ -16,7 +16,7 @@
     </div>
 
     <!-- END Placeholder -->
-    <form method="post" action="{{ route('warehouse.customer.contact.remove') }}">
+    <form method="post" action="{{ route('warehouse.tenants.customer.contact.remove', $customer) }}">
         @csrf
         @method('delete')
         <!-- Modal Backdrop -->

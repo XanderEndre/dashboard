@@ -20,6 +20,14 @@ class TenantOrders extends Model
     public function customer() : BelongsTo
     {
         return $this->belongsTo(TenantCustomer::class, 'customer_id');
-
     }
+
+//CO200
+    // public static array $orderProgress = ['', 'IN PROGRESS', ] ?? null;
+    // Delivery Address (Differ from the customer?)
+    // RECEIVED, IN PROGRESS, BUILD
+    // REVIEW, RUN ROOM, BUILD, SHRINK, BOX, DELIVERY, COMPLETED
+    // HIGHLIGHT SUBSTITUTION (flag? inventory, stock?)
+    // box types (which box we're going to put it in)
+
 }

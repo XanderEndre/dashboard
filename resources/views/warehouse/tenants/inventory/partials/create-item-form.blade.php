@@ -16,10 +16,10 @@
                     </div>
 
                     <div class="col-span-1">
-                        <x-forms.input-label for="vendor_name" :value="__('Vendor Item Name')" required />
-                        <x-forms.text-input id="vendor_name" name="vendor_name" type="text"
-                            :value="old('vendor_name')" placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required />
-                        <x-forms.input-error class="mt-2" :messages="$errors->get('vendor_name')" />
+                        <x-forms.input-label for="vendor_item_name" :value="__('Vendor Item Name')" required />
+                        <x-forms.text-input id="vendor_item_name" name="vendor_item_name" type="text"
+                            :value="old('vendor_item_name')" placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('vendor_item_name')" />
                     </div>
 
                     <!-- Category Description -->
@@ -67,7 +67,7 @@
             </x-cards.footer>
         </x-cards.card> --}}
 
-        {{-- @if (count($vendorOptions) > 0)
+        @if (count($vendors) > 0)
             <x-cards.card>
                 <x-cards.header :title="'Item Vendor'" :description="'Select the vendor that this item belongs too'" />
                 <x-cards.body>
@@ -79,10 +79,18 @@
 
                         <div x-show="choice === 'select'" class="mt-2">
                             <div class="mt-4">
-                                <x-forms.input-label for="selected_vendor_id" :value="__('Select Parent Customer')" />
-                                <x-forms.select name="selected_vendor_id" :options="$vendorOptions" class="mt-1"
+                                <x-forms.input-label for="selected_vendor_id" :value="__('Select Vendor')" />
+                                <x-forms.select name="selected_vendor_id" :options="$vendors" class="mt-1"
                                     x-bind:required="choice === 'select'"></x-forms.select>
+                                {{-- <x-forms.base-select id="selected_vendor_id" name="selected_vendor_id">
+                                    <option value="" selected>Select Vendor</option>
 
+                                    @foreach ($vendors as $id => $option)
+                                        <option value="{{ $id }}">
+                                            {{ $option['name'] }} ({{ $option['short_name'] }})
+                                        </option>
+                                    @endforeach
+                                </x-forms.base-select> --}}
                                 <x-forms.input-error class="mt-2" :messages="$errors->get('selected_vendor_id')" />
                                 <x-buttons.primary-button @click="choice = 'cancel'" type="button"
                                     class="w-full py-3 mt-3">Cancel</x-buttons.primary-button>
@@ -91,9 +99,9 @@
                     </div>
                 </x-cards.body>
             </x-cards.card>
-        @endif --}}
-        {{-- 
-        @if (count($substituteItemOptions) > 0)
+        @endif
+
+        @if (count($items)> 0)
             <x-cards.card>
                 <x-cards.header :title="'Substitute Item'" :description="'Select the substitute item of this item'" />
                 <x-cards.body>
@@ -105,11 +113,21 @@
 
                         <div x-show="choice === 'select'" class="mt-2">
                             <div class="mt-4">
-                                <x-forms.input-label for="selected_sub_item_id" :value="__('Select Substitute Item')" />
-                                <x-forms.select name="selected_sub_item_id" :options="$substituteItemOptions" class="mt-1"
+                                <x-forms.input-label for="sub_item_id" :value="__('Select Substitute Item')" />
+                                <x-forms.select name="sub_item_id" :options="$items" class="mt-1"
                                     x-bind:required="choice === 'select'"></x-forms.select>
 
-                                <x-forms.input-error class="mt-2" :messages="$errors->get('selected_sub_item_id')" />
+                                {{-- <x-forms.base-select id="sub_item_id" name="sub_item_id">
+                                    <option value="" selected>Select Substitute</option>
+
+                                    @foreach ($items as $id => $option)
+                                        <option value="{{ $id }}">
+                                            {{ $option['name'] }}
+                                        </option>
+                                    @endforeach
+                                </x-forms.base-select> --}}
+
+                                <x-forms.input-error class="mt-2" :messages="$errors->get('sub_item_id')" />
                                 <x-buttons.primary-button @click="choice = 'cancel'" type="button"
                                     class="w-full py-3 mt-3">Cancel</x-buttons.primary-button>
                             </div>
@@ -117,9 +135,9 @@
                     </div>
                 </x-cards.body>
             </x-cards.card>
-        @endif --}}
+        @endif
 
-        {{-- <x-cards.card>
+        <x-cards.card>
             <x-cards.header :title="'Item Details'" :description="'Select the individal details that correlate to this item'" />
 
             <x-cards.body>
@@ -127,7 +145,7 @@
                     <!-- Item Type -->
                     <div class="col-span-1">
                         <x-forms.input-label for="item_type" :value="__('Item Type')" />
-                        <x-forms.select name="item_type" :options="App\Models\Warehouse\Inventory\InventoryItem::$itemType" :useOptionsAsValue="true"
+                        <x-forms.select name="item_type" :options="App\Models\Warehouse\Tenants\TenantInventory::$itemType" :useOptionsAsValue="true"
                             class="mt-1"></x-forms.select>
                         <x-forms.input-error for="item_type" class="mt-2" :messages="$errors->get('item_type')" />
                     </div>
@@ -135,7 +153,7 @@
                     <!-- Item Dirty Level -->
                     <div class="col-span-1">
                         <x-forms.input-label for="item_dirty_level" :value="__('Item Dirty Level')" />
-                        <x-forms.select name="item_dirty_level" :options="App\Models\Warehouse\Inventory\InventoryItem::$itemDirtyLevel" :useOptionsAsValue="true"
+                        <x-forms.select name="item_dirty_level" :options="App\Models\Warehouse\Tenants\TenantInventory::$itemDirtyLevel" :useOptionsAsValue="true"
                             class="mt-1"></x-forms.select>
                         <x-forms.input-error for="item_dirty_level" class="mt-2" :messages="$errors->get('item_dirty_level')" />
                     </div>
@@ -143,7 +161,7 @@
                     <!-- Item Tracking Option -->
                     <div class="col-span-1">
                         <x-forms.input-label for="item_trk_option" :value="__('Item Tracking Option')" />
-                        <x-forms.select name="item_trk_option" :options="App\Models\Warehouse\Inventory\InventoryItem::$itemTrkOption" :useOptionsAsValue="true"
+                        <x-forms.select name="item_trk_option" :options="App\Models\Warehouse\Tenants\TenantInventory::$itemTrkOption" :useOptionsAsValue="true"
                             class="mt-1"></x-forms.select>
                         <x-forms.input-error for="item_trk_option" class="mt-2" :messages="$errors->get('item_trk_option')" />
                     </div>
@@ -151,7 +169,7 @@
                     <!-- Item Valuation Method -->
                     <div class="col-span-1">
                         <x-forms.input-label for="item_valuation_method" :value="__('Item Valuation Method')" />
-                        <x-forms.select name="item_valuation_method" :options="App\Models\Warehouse\Inventory\InventoryItem::$itemValuationMethod" :useOptionsAsValue="true"
+                        <x-forms.select name="item_valuation_method" :options="App\Models\Warehouse\Tenants\TenantInventory::$itemValuationMethod" :useOptionsAsValue="true"
                             class="mt-1"></x-forms.select>
                         <x-forms.input-error for="item_valuation_method" class="mt-2" :messages="$errors->get('item_valuation_method')" />
                     </div>
@@ -159,7 +177,7 @@
                     <!-- Item Unit Of Measure -->
                     <div class="col-span-1">
                         <x-forms.input-label for="item_unit_of_measure" :value="__('Item Unit Of Measure')" />
-                        <x-forms.select name="item_unit_of_measure" :options="App\Models\Warehouse\Inventory\InventoryItem::$itemUnitOfMeasure" :useOptionsAsValue="true"
+                        <x-forms.select name="item_unit_of_measure" :options="App\Models\Warehouse\Tenants\TenantInventory::$itemUnitOfMeasure" :useOptionsAsValue="true"
                             class="mt-1"></x-forms.select>
                         <x-forms.input-error for="item_unit_of_measure" class="mt-2" :messages="$errors->get('item_unit_of_measure')" />
                     </div>
@@ -167,13 +185,13 @@
                     <!-- Item Purchase Tax Option -->
                     <div class="col-span-1">
                         <x-forms.input-label for="item_purchase_tax_option" :value="__('Item Purchase Tax Option')" />
-                        <x-forms.select name="item_purchase_tax_option" :options="App\Models\Warehouse\Inventory\InventoryItem::$itemPurchaseTaxOptions" :useOptionsAsValue="true"
+                        <x-forms.select name="item_purchase_tax_option" :options="App\Models\Warehouse\Tenants\TenantInventory::$itemPurchaseTaxOptions" :useOptionsAsValue="true"
                             class="mt-1"></x-forms.select>
                         <x-forms.input-error for="item_purchase_tax_option" class="mt-2" :messages="$errors->get('item_purchase_tax_option')" />
                     </div>
                 </div>
             </x-cards.body>
-        </x-cards.card> --}}
+        </x-cards.card>
 
         <x-cards.card>
             <x-cards.body>

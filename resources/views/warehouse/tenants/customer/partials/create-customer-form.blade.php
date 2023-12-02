@@ -1,6 +1,6 @@
 <section>
 
-    <form method="post" action="{{ route('warehouse.customer.store') }}">
+    <form method="post" action="{{ route('warehouse.tenants.customer.store') }}">
         @csrf
         <x-cards.card>
             <x-cards.header :title="'Create a Customer'" :description="'Enter the details of your new customer'" />

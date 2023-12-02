@@ -157,7 +157,7 @@
     <!-- END Sidebar Header -->
 
     <!-- Sidebar Navigation -->
-    <div id="simplebar" class="sidebar-scroll-section-warehouse">
+    <div id="simplebar" class="sidebar-scroll-section">
         <div class="w-full p-4">
             <nav class="space-y-1">
                 <div class="px-3 pb-2 pt-5 text-xs font-semibold uppercase tracking-wider text-gray-500">
@@ -268,7 +268,7 @@
                 <div class="px-3 pb-2 pt-5 text-xs font-semibold uppercase tracking-wider text-gray-500">
                     Customers
                 </div>
-                <x-navigation.nav-link :route="'warehouse.customer.index'" :label="'Customers'">
+                <x-navigation.nav-link :route="'warehouse.tenants.customer.index'" :label="'Customers'">
                     <svg class="bi bi-people inline-block w-5 h-5" xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                         <path

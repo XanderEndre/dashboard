@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-layout.breadcrumbs :links="['Customers' => route('warehouse.customer.index'), 'View' => '#']" pageTitle="Customers" />
+    <x-layout.breadcrumbs :links="['Customers' => route('warehouse.tenants.customer.index'), 'View' => '#']" pageTitle="Customers" />
 
     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 lg:gap-8 mb-5">
         <!-- Card -->
@@ -27,7 +27,7 @@
             <x-cards.card>
                 <x-cards.header-simple :title="'Addresses'">
                     <div>
-                        @include('warehouse.customer.partials.add-address-form')
+                        @include('warehouse.tenants.customer.partials.add-address-form')
                     </div>
                 </x-cards.header-simple>
                 <x-cards.body>
@@ -63,7 +63,7 @@
                                             </svg>
                                         </x-buttons.primary-button>
                                         <div>
-                                            @include('warehouse.customer.partials.remove-address')
+                                            @include('warehouse.tenants.customer.partials.remove-address')
                                         </div>
                                     </div>
                                 </x-tables.td>
@@ -76,7 +76,7 @@
             <x-cards.card>
                 <x-cards.header-simple :title="'Contact Information'">
                     <div>
-                        @include('warehouse.customer.partials.add-contact-form')
+                        @include('warehouse.tenants.customer.partials.add-contact-form')
                     </div>
 
                 </x-cards.header-simple>
@@ -103,7 +103,7 @@
                                                 </svg>
                                             </x-buttons.primary-button>
                                             <div>
-                                                @include('warehouse.customer.partials.remove-contact')
+                                                @include('warehouse.tenants.customer.partials.remove-contact')
                                             </div>
                                         </div>
                                     </x-tables.td>
@@ -161,7 +161,7 @@
 
             <x-cards.card>
                 <x-cards.header-simple :title="'Private Notes'" />
-                <form method="POST" action="{{ route('warehouse.customer.note.update', $customer) }}">
+                <form method="POST" action="{{ route('warehouse.tenants.customer.note.update', $customer) }}">
                     @csrf
                     @method('patch')
                     <x-cards.body>

@@ -31,13 +31,13 @@
                 <p class="text-sm text-gray-700 dark:text-gray-100 leading-5">
                     {!! __('Page') !!}
                     @if ($paginator->firstItem())
-                        <span class="font-semibold">{{ $paginator->firstItem() }}</span>
+                        <span class="font-semibold">{{ $paginator->currentPage() }}</span>
                         {!! __('of') !!}
-                        <span class="font-semibold">{{ $paginator->lastItem() }}</span>
+                        <span class="font-semibold">{{ $paginator->lastPage() }}</span>
                     @else
                         {{ $paginator->count() }}
                     @endif
-                <p>
+                <p class="text-xs">
                     {!! __('Total') !!}
                     <span class="font-medium">{{ $paginator->total() }}</span>
                     {!! __('results') !!}

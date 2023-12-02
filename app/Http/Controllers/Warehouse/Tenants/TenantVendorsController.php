@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Warehouse\Tenants;
 use App\Jobs\WriteAuditLogJob;
 use App\Models\Warehouse\Tenants\TenantAddressable;
 use App\Models\Warehouse\Tenants\TenantAddressType;
+use App\Models\Warehouse\Tenants\TenantContactable;
 use App\Models\Warehouse\Tenants\TenantContactType;
 use App\Models\Warehouse\Tenants\TenantVendor;
 use App\Services\TenantService;
@@ -91,7 +92,6 @@ class TenantVendorsController extends Controller
             // 'parent_Vendor_id' => $parentVendor ? $parentVendor->id : null,
             // 'Vendor_address_id' => $address ? $address->id : null,
             // 'Vendor_contact_id' => $contactInformation ? $contactInformation->id : null,
-            'warehouse_id' => $this->warehouse->id,
         ]);
 
         DB::beginTransaction();
@@ -310,19 +310,123 @@ class TenantVendorsController extends Controller
     public function storeContact(Request $request, string $id)
     {
         try {
-            $address = $this->validateAndCreateOrFetchAddress($request, $id);
+            $contact = $this->validateAndCreateOrFetchContact($request, $id);
 
-            if ($address) {
-                return redirect()->back()->with('success', "Successfully added new address");
+            if ($contact) {
+                return redirect()->back()->with('success', "Successfully added new contact");
             } else {
-                // Handle the scenario where no address was created or found
-                return redirect()->back()->with('error', 'Failed to add address.');
+                // Handle the scenario where no contact was created or found
+                return redirect()->back()->with('error', 'Failed to add contact.');
             }
         } catch (\Exception $e) {
             // Handle exceptions thrown from the private method
-            return redirect()->back()->with('error', 'Failed to add address. Error: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Failed to add contact. Error: ' . $e->getMessage())->withInput();
         }
     }
+
+
+    private function validateAndCreateOrFetchContact($request, string $id)
+    {
+        // Fetch the vendor
+        $this->tenantService->setConnection($this->warehouse);
+
+        $vendor = TenantVendor::on('tenant')->find($id);
+        if (! $vendor) {
+            throw new \Exception("Vendor not found.");
+        }
+
+        $contactChoice = $request->input('contact_choice');
+
+        if ($contactChoice === 'create') {
+            $validatedData = $request->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'email' => 'required|string|max:255',
+                'phone_number' => 'required|string',
+                'extension' => 'nullable|string|max:10',
+            ]);
+
+            DB::beginTransaction();
+
+            try {
+
+                // Create a new address
+                $contact = TenantContactType::on('tenant')->create(array_merge($validatedData, [
+                    'is_active' => '1'
+                ]));
+
+                // Take the address id, vendor id, and the type and merge it into the TenantAddressable table
+
+                $contactData = array_merge([
+                    'contactable_id' => $vendor->id,
+                    'contactable_type' => get_class($vendor),
+                    'contact_id' => $contact->id
+                ]);
+
+                // Create the new address
+                TenantContactable::on('tenant')->create($contactData);
+
+                // $vendor->addresses()->attach($address->id, ['addressable_type' => get_class($vendor)]);
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Failed to create contact. Error: ' . $e->getMessage())->withInput();
+            }
+
+            return $contact;
+
+        } elseif ($contactChoice === 'select') {
+            $selectedContactId = $request->input('selected_contact_id');
+            $contact = TenantContactType::on('tenant')->findOrFail($selectedContactId); // This will throw an exception if the address is not found
+
+            // Check if the vendor has already this address attached to avoid duplication
+            if (! $vendor->addresses->contains($contact->id)) {
+                $vendor->contacts()->attach($contact->id);
+            }
+
+            return $contact;
+        }
+
+        return null; // If no address choice is made, or fields are not filled
+    }
+
+
+    public function removeContact(Request $request, string $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->tenantService->setConnection($this->warehouse);
+
+
+            // Get the current vendor
+            $selectedContactId = $request->input('contact_id');
+
+            // Ensure the address belongs to the warehouse and vendor
+            $contact = TenantContactable::on('tenant')->find($selectedContactId);
+            if (! $contact) {
+                throw new \Exception("Vendor not found.");
+            }
+
+            // Grabt hge vendor and deattach
+
+            $vendor = TenantVendor::on('tenant')->find($id);
+            if (! $vendor) {
+                throw new \Exception("Vendor not found.");
+            }
+            // Use the address ID to detach the address
+            $vendor->contacts()->detach($contact->id);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', "Successfully removed contact");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to remove contact. Error: ' . $e->getMessage())->withInput();
+        }
+    }
+
 
 
 }

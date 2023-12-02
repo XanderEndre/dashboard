@@ -16,6 +16,8 @@ return new class extends Migration {
                 ->constrained('tenant_customers')
                 ->comment('Foreign key referencing the customer');
             $table->bigInteger('po_number');
+            // status
+        
             $table->timestamps();
             $table->softDeletes();
 

@@ -3,16 +3,16 @@
 
 /* SimpleBar overrides */
 /* App - 01 CRM */
-.sidebar-scroll-section-crm {
+.sidebar-scroll-section {
     height: calc(100vh - 4rem);
 }
 
-.sidebar-scroll-section-crm .simplebar-scrollbar::before {
+.sidebar-scroll-section .simplebar-scrollbar::before {
     background-color: #fff;
     left: 0.25rem;
 }
 
-.dark .sidebar-scroll-section-crm .simplebar-scrollbar::before {
+.dark .sidebar-scroll-section .simplebar-scrollbar::before {
     background-color: #fff;
 }
 

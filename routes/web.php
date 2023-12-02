@@ -58,6 +58,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::prefix('warehouse')->name('warehouse.tenants.')->group(function () {
 
+            Route::prefix('customer')->name('customer.')->group(function () {
+                Route::get('/', [TenantCustomersController::class, 'index'])->name('index');
+                Route::get('create', [TenantCustomersController::class, 'create'])->name('create');
+                Route::post('create', [TenantCustomersController::class, 'store'])->name('store');
+                Route::delete('{id}', [TenantCustomersController::class, 'destroy'])->name('delete');
+                Route::get('{customer}', [TenantCustomersController::class, 'show'])->name('show');
+                Route::post('{customer}/address', [TenantCustomersController::class, 'storeAddress'])->name('address.store');
+                Route::post('{customer}/contact', [TenantCustomersController::class, 'storeContact'])->name('contact.store');
+                Route::delete('{customer}/address', [TenantCustomersController::class, 'removeAddress'])->name('address.remove');
+                Route::delete('{customer}/contact', [TenantCustomersController::class, 'removeContact'])->name('contact.remove');
+                Route::patch('{customer}/update', [TenantCustomersController::class, 'updateNote'])->name('note.update');
+
+            });
+
+
             Route::prefix('vendor')->name('vendor.')->group(function () {
                 Route::get('/', [TenantVendorsController::class, 'index'])->name('index');
                 Route::get('create', [TenantVendorsController::class, 'create'])->name('create');
@@ -117,12 +132,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
         Route::prefix('warehouse/items')->name('warehouse.inventory.items.')->group(function () {
             Route::get('/', [WarehouseController::class, 'index'])->name('index');
-        });
-        Route::prefix('warehouse/customer')->name('warehouse.customer.')->group(function () {
-            Route::get('/', [TenantCustomersController::class, 'index'])->name('index');
-            Route::get('create', [TenantCustomersController::class, 'create'])->name('create');
-            Route::post('create', [TenantCustomersController::class, 'store'])->name('store');
-            Route::delete('{id}', [TenantCustomersController::class, 'destroy'])->name('delete');
         });
 
 

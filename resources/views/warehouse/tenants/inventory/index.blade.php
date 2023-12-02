@@ -36,7 +36,7 @@
                                     @if ($item->vendor)
                                         <span
                                             class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 rounded-md bg-blue-50 ring-1 ring-inset ring-blue-600/20">
-                                            {{ $item->vendor->vendor_name }}
+                                            {{ $item->vendor->name }}
                                         </span>
                                     @else
                                         <span

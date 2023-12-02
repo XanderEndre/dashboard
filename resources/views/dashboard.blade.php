@@ -18,7 +18,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 lg:gap-8 mb-5">
             <!-- Card -->
             <!-- $warehouse->customers->count() -->
-            <x-cards.statistic-card :number="1" :label="'Total Orders'" :description="'All orders'">
+            <x-cards.statistic-card :number="$orders->total()" :label="'Total Orders'" :description="'All orders'">
                 <svg class="bi bi-box-seam inline-block w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                     viewBox="0 0 16 16" aria-hidden="true">
                     <path
@@ -26,7 +26,7 @@
                 </svg>
             </x-cards.statistic-card>
 
-            <x-cards.statistic-card :number="1" :label="'Customers'" :description="'All active customers'">
+            <x-cards.statistic-card :number="$customers->count()" :label="'Customers'" :description="'All active customers'">
                 <svg class="hi-outline hi-users inline-block w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -34,7 +34,7 @@
                 </svg>
             </x-cards.statistic-card>
 
-            <x-cards.statistic-card :number="1" :label="'Vendors'" :description="'All active vendors'">
+            <x-cards.statistic-card :number="$vendors->count()" :label="'Vendors'" :description="'All active vendors'">
                 <svg class="bi bi-shop inline-block w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                     viewBox="0 0 16 16" aria-hidden="true">
                     <path
@@ -42,7 +42,7 @@
                 </svg>
             </x-cards.statistic-card>
 
-            <x-cards.statistic-card :number="1" :label="'Inventory Items'" :description="'All active inventory items'">
+            <x-cards.statistic-card :number="$inventoryItems->count()" :label="'Inventory Items'" :description="'All active inventory items'">
                 <svg class="bi bi-cart-check inline-block w-5 h-5" xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                     <path
@@ -53,20 +53,48 @@
             </x-cards.statistic-card>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 lg:gap-8">
             <div class="col-span-3">
                 <x-cards.card>
                     <x-cards.header :title="'Recent Orders'" :description="'Manage all recent orders'" />
-
-
                     <x-cards.body>
-                        <div>Content</div>
+                        <x-tables.table :headers="['Order Number', 'Customer Name', 'Status', 'Actions']">
+                            <tbody>
+                                @foreach ($orders as $order)
+                                    <tr>
+                                        <x-tables.td>{{ $order->id }}</x-tables.td>
+                                        <x-tables.td>{{ $order->customer->name }}</x-tables.td>
+                                        <x-tables.td>
+                                            <x-badges.success>In Progress</x-badges.success>
+                                        </x-tables.td>
+                                        <x-tables.td class="text-right">
+                                            <x-buttons.tooltip :tooltip="'View Order'" :position="'left'">
+                                                <x-buttons.link-button href="#">
+                                                    <svg class="hi-mini hi-eye inline-block w-5 h-5"
+                                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                        fill="currentColor" aria-hidden="true">
+                                                        <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                                                        <path fill-rule="evenodd"
+                                                            d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                </x-buttons.link-button>
+                                            </x-buttons.tooltip>
+                                        </x-tables.td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </x-tables.table>
+                        {{-- <canvas id="js-01crm-chartjs-sales" class="h-80"></canvas> --}}
                     </x-cards.body>
+                    <x-cards.footer>
+                        {{ $orders->links() }}
+                    </x-cards.footer>
                 </x-cards.card>
 
             </div>
 
-            <div class="col-span-3 md:col-span-1">
+            <div class="col-span-1 md:col-span-2">
                 <x-cards.card>
                     <x-cards.header :title="'Recent Orders'" :description="'Manage all recent orders'" />
 
@@ -87,4 +115,7 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ mix('/js/app.js') }}"></script>
+
 </x-app-layout>
