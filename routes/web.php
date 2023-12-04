@@ -91,14 +91,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('create', [TenantInventoryController::class, 'create'])->name('create');
                 Route::post('create', [TenantInventoryController::class, 'store'])->name('store');
                 Route::delete('{id}', [TenantInventoryController::class, 'destroy'])->name('delete');
-                Route::get('{id}', [TenantInventoryController::class, 'show'])->name('show');
+                Route::get('show/{item}', [TenantInventoryController::class, 'show'])->name('show');
+                // Route::get('{id}', [TenantInventoryController::class, 'show'])->name('show');
 
                 Route::prefix('recipes')->name('recipes.')->group(function () {
                     Route::get('/', [TenantRecipesController::class, 'index'])->name('index');
                     Route::get('create', [TenantRecipesController::class, 'create'])->name('create');
                     Route::post('create', [TenantRecipesController::class, 'store'])->name('store');
                     Route::delete('{id}', [TenantRecipesController::class, 'destroy'])->name('delete');
-                    Route::get('{id}', [TenantRecipesController::class, 'show'])->name('show');
+                    Route::get('{recipe}', [TenantRecipesController::class, 'show'])->name('show');
+
 
                     Route::prefix('packaging/box')->name('box.')->group(function () {
                         Route::get('/', [TenantRecipeBoxPackagingController::class, 'index'])->name('index');
@@ -128,12 +130,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
 
-        Route::prefix('warehouse/categories')->name('warehouse.inventory.categories.')->group(function () {
-            Route::get('/', [WarehouseController::class, 'index'])->name('index');
-        });
-        Route::prefix('warehouse/products')->name('warehouse.inventory.products.')->group(function () {
-            Route::get('/', [WarehouseController::class, 'index'])->name('index');
-        });
+        // Route::prefix('warehouse/categories')->name('warehouse.inventory.categories.')->group(function () {
+        //     Route::get('/', [WarehouseController::class, 'index'])->name('index');
+        // });
+        // Route::prefix('warehouse/products')->name('warehouse.inventory.products.')->group(function () {
+        //     Route::get('/', [WarehouseController::class, 'index'])->name('index');
+        // });
         Route::prefix('warehouse/items')->name('warehouse.inventory.items.')->group(function () {
             Route::get('/', [WarehouseController::class, 'index'])->name('index');
         });

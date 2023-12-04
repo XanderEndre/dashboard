@@ -91,12 +91,6 @@
         </div>
 
         <x-cards.card>
-            <x-cards.header-simple :title="'Order Cost'" />
-            <x-cards.body></x-cards.body>
-        </x-cards.card>
-
-
-        <x-cards.card>
             <x-cards.body>
                 <x-buttons.primary-button type="submit"
                     class="w-full p-2">{{ __('Create Order') }}</x-buttons.primary-button>

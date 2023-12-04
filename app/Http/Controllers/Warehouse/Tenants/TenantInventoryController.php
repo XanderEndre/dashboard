@@ -228,8 +228,13 @@ class TenantInventoryController extends Controller
 
     public function show(Request $request, string $id)
     {
+        // dd($request);
+
+        // dd($request);
         // Set the connection to the tenant's schema
         $this->tenantService->setConnection($this->warehouse);
+
+        // dd($id);
 
         // Find the Customer in the current schema
         $item = TenantInventory::on('tenant')->find($id);
