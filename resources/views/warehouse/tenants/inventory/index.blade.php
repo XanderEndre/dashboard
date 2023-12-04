@@ -9,7 +9,7 @@
                     Inventory Item</x-buttons.link-button>
             </x-cards.header>
             <x-cards.body>
-                <x-tables.table :headers="['Item Name', 'Substitute Item', 'Vendor', 'Status', 'Actions']">
+                <x-tables.table :headers="['Item Name', 'Substitute Item', 'Vendor', 'Status', 'Cost Per Unit', 'Actions']">
 
                     <tbody>
                         @foreach ($inventoryItems as $item)
@@ -58,18 +58,29 @@
                                         </span>
                                     @endif
                                 </x-tables.td>
-                                <x-tables.td class="flex justify-end space-x-2">
+                                <x-tables.td>
+                                    {{ $item->total_cost }}
+                                </x-tables.td>
+                                <x-tables.td class="text-right flex space-x-2 items-center justify-end">
+                                    <x-buttons.tooltip :tooltip="'View Item'" :position="'left'">
+                                        <x-buttons.link-button
+                                            href="{{ route('warehouse.tenants.inventory.show', $item) }}">
+                                            <svg class="hi-mini hi-eye inline-block w-5 h-5"
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" aria-hidden="true">
+                                                <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </x-buttons.link-button>
+                                    </x-buttons.tooltip>
+                                    {{-- <x-buttons.tooltip :tooltip="'Delete Item'" :position="'left'">
+                                        <div>
+                                            {{-- @include('warehouse.tenants.vendor.partials.delete-vendor-form') -
+                                        </div>
+                                    </x-buttons.tooltip> --}}
 
-                                    <x-buttons.primary-button disabled>Edit</x-buttons.primary-button>
-                                    <x-buttons.primary-button disabled>Duplicate</x-buttons.primary-button>
-                                    @if ($warehouse->warehouseOwner->id == auth()->user()->id)
-                                        <form action="{{ route('warehouse.tenants.inventory.delete', $item->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <x-buttons.danger-button>Remove</x-buttons.danger-button>
-
-                                        </form>
-                                    @endif
                                 </x-tables.td>
                             </tr>
                         @endforeach

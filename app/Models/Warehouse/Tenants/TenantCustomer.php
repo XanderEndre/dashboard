@@ -22,6 +22,7 @@ class TenantCustomer extends Model
     protected $fillable = [
         'name',
         'payment_terms',
+        'multiplier',
         'primary_email',
         'notes',
         'parent_customer_id',
@@ -40,7 +41,7 @@ class TenantCustomer extends Model
 
     public function orders() : HasMany
     {
-        return $this->hasMany(TenantOrders::class, 'order_id');
+        return $this->hasMany(TenantOrders::class, 'customer_id');
     }
 
 

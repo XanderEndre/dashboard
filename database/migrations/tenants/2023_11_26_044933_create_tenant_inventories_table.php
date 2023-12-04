@@ -23,15 +23,23 @@ return new class extends Migration {
             $table->foreignIdFor(\App\Models\Warehouse\Tenants\TenantVendor::class, 'vendor_id')
                 ->nullable()
                 ->constrained('tenant_vendors')
-                ->comment('Link to general description for the item to allow substitutions, include both a main category and a sub-category');
+                ->comment('Foreign key linking to the vendor of this item');
 
             $table->foreignIdFor(TenantInventory::class, 'sub_item_id')
                 ->nullable()
                 ->constrained('tenant_inventories')
-                ->comment('Link to general description for the item to allow substitutions, include both a main category and a sub-category');
+                ->comment('Optional reference to a related sub-item');
 
-            $table->bigInteger('cost')
-                ->comment('Current cost will be updated automatically by received purchases according to the Valuation Method selected. ');
+            $table->decimal('package_size', 8, 2); // Precision and scale added
+            $table->decimal('case_cost', 10, 2); // Precision and scale added
+            $table->decimal('shipping_cost', 10, 2); // Precision and scale added
+
+            $table->decimal('total_cost', 10, 2)->storedAs('((case_cost / package_size) / 16) + shipping_cost');
+
+            // $table->decimal('case_cost', 10, 2); // Precision and scale added
+            // $table->decimal('total_cost', 10, 2);
+
+
             $table->string('custom_po_item_name')
                 ->nullable()
                 ->comment('Name from the Customer PO');
@@ -60,9 +68,15 @@ return new class extends Migration {
 
             $table->text('ingredient_label')
                 ->nullable()
-                ->comment('Detailed Ingredient Label');
+                ->comment('Detailed Ingredient Label, if applicable');
 
-            $table->boolean('is_active');
+
+            $table->boolean('is_active')
+                ->default(true) // Added default value
+                ->comment('Indicates if the item is currently active');
+
+            $table->string('reference_image')
+                ->nullable();
 
             $table->timestamps();
             $table->softDeletes();

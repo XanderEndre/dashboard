@@ -11,6 +11,7 @@ class TenantRecipeItemPackagings extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name'
+        'name',
+        'total_cost'
     ];
 }

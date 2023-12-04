@@ -21,10 +21,17 @@
                             placeholder="e.g., ABC" class="block w-full mt-1" required />
                         <x-forms.input-error class="mt-2" :messages="$errors->get('payment_terms')" />
                     </div>
+                    <!-- Payment Terms -->
+                    {{-- <div>
+                        <x-forms.input-label for="multiplier" :value="__('Payment Terms')" required />
+                        <x-forms.text-input id="multiplier" name="payment_terms" type="text" :value="old('payment_terms')"
+                            placeholder="e.g., ABC" class="block w-full mt-1" required />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('payment_terms')" />
+                    </div> --}}
                 </div>
             </x-cards.body>
         </x-cards.card>
-        {{-- @if (count($customerOptions) > 0)
+        {{-- @if ($customers->count() > 0)
             <x-cards.card>
                 <x-cards.header :title="'Parent Customer'" :description="'Select the parent of this customer'" />
                 <x-cards.body>
@@ -37,7 +44,7 @@
                         <div x-show="choice === 'select'" class="mt-2">
                             <div class="mt-4">
                                 <x-forms.input-label for="selected_parent_id" :value="__('Select Parent Customer')" />
-                                <x-forms.select name="selected_parent_id" :options="$customerOptions" class="mt-1"
+                                <x-forms.select name="selected_parent_id" :options="$customers" class="mt-1"
                                     x-bind:required="choice === 'select'"></x-forms.select>
 
                                 <x-forms.input-error class="mt-2" :messages="$errors->get('selected_parent_id')" />

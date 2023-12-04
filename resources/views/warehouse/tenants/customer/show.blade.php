@@ -127,8 +127,24 @@
                 </x-cards.header-simple>
                 <x-cards.body>
 
-                    <x-tables.table :headers="['ID', 'PRODUCTS', 'SUBMITTED', 'STATUS', 'VALUE', 'Actions']">
-                        <tr>
+                    <x-tables.table :headers="['Order Id', 'Order Recipe #', 'Value', 'Status', 'Actions']">
+                        @foreach($customer->orders as $order)
+                            <tr>
+                                <x-tables.td>
+                                    {{  $order->id }}
+                                </x-tables.td>
+                                <x-tables.td>
+                                    (FILL IN)
+                                </x-tables.td>
+                                <x-tables.td>
+                                    Total Value of Orders
+                                </x-tables.td>
+                                <x-tables.td>
+                                    Status Badge (create a component and pass through)
+                                </x-tables.td>
+                            </tr>
+                        @endforeach
+                        {{-- <tr>
                             <x-tables.td>1</x-tables.td>
                             <x-tables.td>123</x-tables.td>
                             <x-tables.td>11-29-2023</x-tables.td>
@@ -154,7 +170,7 @@
                                     </svg>
                                 </x-buttons.secondary-button>
                             </x-tables.td>
-                        </tr>
+                        </tr> --}}
                     </x-tables.table>
                 </x-cards.body>
             </x-cards.card>

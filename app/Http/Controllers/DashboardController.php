@@ -44,7 +44,7 @@ class DashboardController extends Controller
         try {
             $this->tenantService->setConnection($this->warehouse);
             // Fetch all the orders, customers, vendors, inventory items
-            $customers = TenantCustomer::on('tenant')->get();
+            $customers = TenantCustomer::on('tenant')->paginate(5);
             $vendors = TenantVendor::on('tenant')->get();
             $inventoryItems = TenantInventory::on('tenant')->get();
             $orders = TenantOrders::on('tenant')

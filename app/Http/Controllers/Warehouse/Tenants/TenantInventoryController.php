@@ -90,25 +90,44 @@ class TenantInventoryController extends Controller
                 'name' => 'required|string|max:255',
                 'description' => 'required|string|max:255',
                 'vendor_item_name' => 'required|string|max:255',
-                'cost' => 'required|numeric',
+                'case_cost' => 'required|numeric',
+                'shipping_cost' => 'required|numeric',
+                'package_size' => 'required|numeric',
                 'item_type' => ['required', Rule::in(TenantInventory::$itemType)],
                 'item_dirty_level' => ['required', Rule::in(TenantInventory::$itemDirtyLevel)],
                 'item_trk_option' => ['required', Rule::in(TenantInventory::$itemTrkOption)],
                 'item_valuation_method' => ['required', Rule::in(TenantInventory::$itemValuationMethod)],
                 'item_unit_of_measure' => ['required', Rule::in(TenantInventory::$itemUnitOfMeasure)],
                 'item_purchase_tax_option' => ['required', Rule::in(TenantInventory::$itemPurchaseTaxOptions)],
+                'reference_image' => 'required|file|mimes:png,jpeg,webp|max:2048',
                 // 'sub_item_id' => 'exists:tenant.tenant_inventories,id',
                 // 'vendor_id' => 'exists:tenant.tenant_vendor,id',
                 'is_active' => 'required|boolean'
             ]);
+            // dd($validatedData);
 
             // dd($request);
             $subItemId = $this->validateAndFetchSubtituteItem($request);
             $vendorId = $this->validateAndFetchVendor($request);
 
+            // CLEAN THE WAREHOUSE ID 
+            $cleanedUUID = str_replace('-', '', $this->warehouse->schema_name);
+
+            $image = $request->file('reference_image'); // Uploaded image file
+            $reference_image = $image->store($cleanedUUID, 'warehouse');
+
+            // We want to calucate the total cost 
+            // (case cost / package size Ibs) / 16 (<- 1oz) = cost / oz
+            // shipping => cost/oz + shipping_cost = total cost
+
+            // $costOz = ($validatedData['case_cost'] / $validatedData['package_size']) / 16;
+            // $totalCost = $costOz + $validatedData['shipping_cost'];
+
             $data = array_merge($validatedData, [
                 'sub_item_id' => $subItemId ? $subItemId->id : null,
                 'vendor_id' => $vendorId ? $vendorId->id : null,
+                'reference_image' => $reference_image
+                // 'total_cost' => $totalCost ? $totalCost : 0
             ]);
             // dd($data);
 
@@ -205,4 +224,36 @@ class TenantInventoryController extends Controller
             return redirect()->back()->with('error', 'Failed to remove Inventory Item. Error: ' . $e->getMessage())->withInput();
         }
     }
+
+
+    public function show(Request $request, string $id)
+    {
+        // Set the connection to the tenant's schema
+        $this->tenantService->setConnection($this->warehouse);
+
+        // Find the Customer in the current schema
+        $item = TenantInventory::on('tenant')->find($id);
+
+        // Construct the image path using $cleanedUUID and $item->reference_image
+        $cleanedUUID = str_replace('-', '', $this->warehouse->schema_name);
+        // $imagePath = "warehouse/{$cleanedUUID}/{$item->reference_image}";
+
+        // Generate the image URL using the asset function
+        $imageUrl = asset("storage/warehouse/{$item->reference_image}");
+
+        // Debug the image URL
+        // dd($imageUrl);
+
+
+
+        if (! $item) {
+            return redirect()->back()->with('error', 'The requested item does not exist in this warehouse.');
+        }
+
+
+        // If the customer exists and belongs to the warehouse, show the customer
+        return view('warehouse.tenants.inventory.show', ['item' => $item, 'imageUrl' => $imageUrl]);
+    }
+
+
 }

@@ -26,7 +26,7 @@
                 </svg>
             </x-cards.statistic-card>
 
-            <x-cards.statistic-card :number="$customers->count()" :label="'Customers'" :description="'All active customers'">
+            <x-cards.statistic-card :number="$customers->total()" :label="'Customers'" :description="'All active customers'">
                 <svg class="hi-outline hi-users inline-block w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -56,7 +56,7 @@
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4 lg:gap-8">
             <div class="col-span-3">
                 <x-cards.card>
-                    <x-cards.header :title="'Recent Orders'" :description="'Manage all recent orders'" />
+                    <x-cards.header :title="'Top 5 Recent Orders'" :description="'Manage all recent orders'" />
                     <x-cards.body>
                         <x-tables.table :headers="['Order Number', 'Customer Name', 'Status', 'Actions']">
                             <tbody>
@@ -69,7 +69,7 @@
                                         </x-tables.td>
                                         <x-tables.td class="text-right">
                                             <x-buttons.tooltip :tooltip="'View Order'" :position="'left'">
-                                                <x-buttons.link-button href="#">
+                                                <x-buttons.link-button href="{{  route('warehouse.tenants.order.show', $order) }}">
                                                     <svg class="hi-mini hi-eye inline-block w-5 h-5"
                                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                         fill="currentColor" aria-hidden="true">
@@ -87,9 +87,9 @@
                         </x-tables.table>
                         {{-- <canvas id="js-01crm-chartjs-sales" class="h-80"></canvas> --}}
                     </x-cards.body>
-                    <x-cards.footer>
+                    {{-- <x-cards.footer>
                         {{ $orders->links() }}
-                    </x-cards.footer>
+                    </x-cards.footer> --}}
                 </x-cards.card>
 
             </div>

@@ -75,9 +75,14 @@ class TenantRecipeBoxPackagingController extends Controller
         // Start by validating the packaging details which are always required
         $packaging = $request->validate([
             'name' => 'required|string|max:255',
-            'quantity' => 'required|numeric'
+            'max_item_quantity' => 'required|numeric',
+            'box_cost' => 'required|numeric',
+            'packing_cost' => 'required|numeric',
+            'shrink' => 'required|numeric',
+            'labor' => 'required|numeric'
         ]);
 
+        // dd($packaging);
 
         // // Merging additional data
         // $data = array_merge($PackagingData, [

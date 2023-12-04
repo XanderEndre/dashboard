@@ -123,7 +123,7 @@
                 </x-cards.header-simple>
                 <x-cards.body>
 
-                    <x-tables.table :headers="['ID', 'PRODUCTS', 'SUBMITTED', 'STATUS', 'VALUE', 'Actions']">
+                    <x-tables.table :headers="['Order Id', 'Order Recipe #', 'Status', 'STATUS', 'VALUE', 'Actions']">
                         <tr>
                             <x-tables.td>1</x-tables.td>
                             <x-tables.td>123</x-tables.td>

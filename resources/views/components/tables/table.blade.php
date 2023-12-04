@@ -1,5 +1,6 @@
 {{-- resources/views/components/table.blade.php --}}
-<div class="border border-gray-200 rounded overflow-x-auto min-w-full bg-white dark:bg-gray-800 dark:border-gray-700">
+<div
+    class="border border-gray-200 rounded overflow-x-auto min-w-full bg-white dark:bg-gray-800 dark:border-gray-700 table-auto">
     <table class="min-w-full text-sm align-middle whitespace-nowrap">
         <thead>
             <tr>

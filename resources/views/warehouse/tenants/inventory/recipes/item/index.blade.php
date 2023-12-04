@@ -9,13 +9,16 @@
                     Packaging</x-buttons.link-button>
             </x-cards.header>
             <x-cards.body>
-                <x-tables.table :headers="['Packaging Name', 'Actions']">
+                <x-tables.table :headers="['Packaging Name', 'Cost Per Unit', 'Actions']">
 
                     <tbody>
                         @foreach ($packagings as $packaging)
                             <tr>
                                 <x-tables.td>
                                     {{ $packaging->name }}
+                                </x-tables.td>
+                                <x-tables.td>
+                                    {{ $packaging->total_cost }}
                                 </x-tables.td>
 
                 

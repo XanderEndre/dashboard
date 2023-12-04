@@ -26,12 +26,22 @@
                             placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required />
                         <x-forms.input-error class="mt-2" :messages="$errors->get('po_number')" />
                     </div>
-                    {{-- <div class="col-span-1">
-                        <x-forms.input-label for="name" :value="__('Date Required')" required />
-                        <x-forms.text-input id="name" name="name" type="text" :value="old('name')"
-                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required />
-                        <x-forms.input-error class="mt-2" :messages="$errors->get('name')" />
-                    </div> --}}
+
+                    <div class="col-span-1">
+                        <x-forms.input-label for="expected_delivery_date" :value="__('Expected Delivery Date')" required />
+                        <x-forms.text-input id="expected_delivery_date" name="expected_delivery_date" type="date"
+                            :value="old('expected_delivery_date')" class="block w-full mt-1" required />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('expected_delivery_date')" />
+                    </div>
+
+                    <div class="col-span-1">
+                        <x-forms.input-label for="address_id" :value="__('Select Delivery Address')" />
+                        <x-forms.select name="address_id" :options="$addresses" class="mt-1" />
+
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('address_id')" />
+                    </div>
+
+                    <!-- Create a select statemnet that takes the current customer and gfetches associated addresses? -->
                 </div>
             </x-cards.body>
         </x-cards.card>
@@ -66,11 +76,6 @@
                                             x-bind:name="'items[' + index + '][quantity]'" type="text"
                                             placeholder="Enter Quantity" class="block w-full" required />
                                     </x-tables.td>
-                                    {{-- <x-tables.td>
-                                        <x-forms.text-input x-bind:id="'ounces' + index"
-                                            x-bind:name="'items[' + index + '][ounces]'" type="text"
-                                            placeholder="Enter Quantity" class="block w-full" disabled />
-                                    </x-tables.td> --}}
                                     <x-tables.td class="flex justify-end">
                                         <x-buttons.danger-button
                                             @click.prevent="removeItem(index)">Remove</x-buttons.danger-button>
@@ -85,11 +90,16 @@
             </x-cards.card>
         </div>
 
+        <x-cards.card>
+            <x-cards.header-simple :title="'Order Cost'" />
+            <x-cards.body></x-cards.body>
+        </x-cards.card>
+
 
         <x-cards.card>
             <x-cards.body>
                 <x-buttons.primary-button type="submit"
-                    class="w-full p-2">{{ __('Create Inventory Item') }}</x-buttons.primary-button>
+                    class="w-full p-2">{{ __('Create Order') }}</x-buttons.primary-button>
             </x-cards.body>
         </x-cards.card>
     </form>

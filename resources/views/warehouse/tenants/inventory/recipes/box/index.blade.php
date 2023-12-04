@@ -9,7 +9,7 @@
                     Packaging</x-buttons.link-button>
             </x-cards.header>
             <x-cards.body>
-                <x-tables.table :headers="['Packaging Name', 'Max Items', 'Actions']">
+                <x-tables.table :headers="['Packaging Name', 'Max Items', 'Cost Per Unit', 'Actions']">
 
                     <tbody>
                         @foreach ($packagings as $packaging)
@@ -20,6 +20,10 @@
 
                                 <x-tables.td>
                                     {{ $packaging->quantity }}
+                                </x-tables.td>
+
+                                <x-tables.td>
+                                    {{ $packaging->total_cost }}
                                 </x-tables.td>
 
                                 <x-tables.td class="flex justify-end space-x-2">

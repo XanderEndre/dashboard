@@ -74,7 +74,8 @@ class TenantRecipeItemPackagingController extends Controller
 
         // Start by validating the packaging details which are always required
         $packaging = $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
+            'total_cost' => 'required|numeric'
         ]);
 
 

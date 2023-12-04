@@ -21,7 +21,8 @@ return new class extends Migration {
             $table->foreignIdFor(\App\Models\Warehouse\Tenants\Recipe\TenantRecipeItemPackagings::class, 'packaging_id')
                 ->constrained('tenant_recipe_item_packagings')
                 ->comment('Foreign key referencing the customer');
-
+            $table->decimal('ounces', 10, 2);
+            $table->decimal('total_cost', 10, 2);
 
             $table->timestamps();
             $table->softDeletes();

@@ -6,7 +6,9 @@ use App\Jobs\WriteAuditLogJob;
 use App\Models\Warehouse\Tenants\Order\TenantOrderDetails;
 use App\Models\Warehouse\Tenants\Order\TenantOrders;
 use App\Models\Warehouse\Tenants\Recipe\TenantRecipes;
+use App\Models\Warehouse\Tenants\TenantAddressType;
 use App\Models\Warehouse\Tenants\TenantCustomer;
+use App\Models\Warehouse\Tenants\TenantInventory;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -80,8 +82,12 @@ class TenantOrdersController extends Controller
             ->toArray();
 
         // 
+        $addresses = TenantAddressType::on('tenant')->latest()->get();
+        $addressOptions = $addresses->mapWithKeys(fn ($address) => [$address->id => $address->formatted()])->toArray();
 
-        return view("warehouse.tenants.order.create", ['warehouse' => $this->warehouse, 'customers' => $customers, 'recipes' => $recipes]);
+
+
+        return view("warehouse.tenants.order.create", ['warehouse' => $this->warehouse, 'customers' => $customers, 'recipes' => $recipes, 'addresses' => $addressOptions]);
     }
 
 
@@ -102,25 +108,50 @@ class TenantOrdersController extends Controller
             $validatedData = $request->validate([
                 'customer_id' => 'required|string|max:255',
                 'po_number' => 'required|string|max:255',
+                'expected_delivery_date' => 'required|date',
+
                 'items.*.quantity' => 'required|numeric',
-                'items.*.item' => 'required|exists:tenant.tenant_inventories,id',
+                'items.*.item' => 'required|exists:tenant.tenant_recipes,id',
             ]);
 
 
 
             $order = TenantOrders::on('tenant')->create([
                 'customer_id' => $validatedData['customer_id'],
-                'po_number' => $validatedData['po_number']
+                'po_number' => $validatedData['po_number'],
+                'expected_delivery_date' => $validatedData['expected_delivery_date'],
+                'order_state' => 'Review',
+                'total_cost' => 0,
+                'created_by' => auth()->user()->id,
+                'updated_by' => auth()->user()->id,
             ]);
 
+            $totalCost = 0;
 
             foreach ($validatedData['items'] as $item) {
+                $totalOrderDetailCost = 0;
+                // Calculate the total cost by grabbing the item, tis cost
+
+                $recipeCost = TenantRecipes::on('tenant')
+                    ->where('id', $item['item'])
+                    ->value('total_cost') ?? 0;
+
+                // mutliply by the quantity
+                $totalOrderDetailCost = $recipeCost * $item['quantity'];
+
+
                 TenantOrderDetails::on('tenant')->create([
                     'order_id' => $order->id,
-                    'item_id' => $item['item'],
-                    'quantity' => $item['quantity']
+                    'recipe_id' => $item['item'],
+                    'quantity' => $item['quantity'],
+                    'total_cost' => $totalOrderDetailCost
                 ]);
+
+                $totalCost += $totalOrderDetailCost;
             }
+
+
+            $order->update(['total_cost' => $totalCost]);
 
             dispatch(new WriteAuditLogJob('created', 'Created Orders \'' . $order->name . '\'', $this->user->id, $this->warehouse));
 
@@ -173,4 +204,30 @@ class TenantOrdersController extends Controller
             return redirect()->back()->with('error', 'Failed to remove Orders. Error: ' . $e->getMessage())->withInput();
         }
     }
+
+
+    public function show(Request $request, string $id)
+    {
+        // Set the connection to the tenant's schema
+        $this->tenantService->setConnection($this->warehouse);
+
+        // Find the Customer in the current schema
+        $order = TenantOrders::on('tenant')
+            ->find($id);
+
+        if (! $order) {
+            return redirect()->back()->with('error', 'The requested order does not exist in this warehouse.');
+        }
+
+        // $addresses = TenantAddressType::on('tenant')->latest()->get();
+        // $contacts = TenantContactType::on('tenant')->latest()->get();
+
+        // $addressOptions = $addresses->mapWithKeys(fn ($address) => [$address->id => $address->formatted()])->toArray();
+        // $contactOptions = $contacts->mapWithKeys(fn ($contact) => [$contact->id => $contact->formatted()])->toArray();
+
+
+        // If the customer exists and belongs to the warehouse, show the customer
+        return view('warehouse.tenants.order.show', ['order' => $order]);
+    }
+
 }

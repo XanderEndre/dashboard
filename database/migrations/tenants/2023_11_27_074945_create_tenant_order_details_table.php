@@ -13,12 +13,12 @@ return new class extends Migration {
         Schema::create('tenant_order_details', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Warehouse\Tenants\Order\TenantOrders::class, 'order_id')
-                ->constrained('tenant_orders')
-                ->comment('Foreign key referencing the customer');
-            $table->foreignIdFor(\App\Models\Warehouse\Tenants\TenantInventory::class, 'item_id')
-                ->constrained('tenant_inventories')
-                ->comment('Foreign key referencing the customer');
+                ->constrained('tenant_orders');
+            $table->foreignIdFor(\App\Models\Warehouse\Tenants\Recipe\TenantRecipes::class, 'recipe_id')
+                ->constrained('tenant_recipes');
             $table->bigInteger('quantity');
+            $table->decimal('total_cost');
+            // $table->decimal('line_total', 10, 2)->storedAs('tenant_inventories.item_id * quantity');
             $table->timestamps();
             $table->softDeletes();
 

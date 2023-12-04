@@ -20,6 +20,7 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained('tenant_customers')
                 ->comment('Foreign key referencing the customer');
+            $table->decimal('total_cost', 10, 2);
             $table->timestamps();
             $table->softDeletes();
         });

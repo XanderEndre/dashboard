@@ -60,7 +60,16 @@ class TenantCustomersController extends Controller
      */
     public function create()
     {
-        return view("warehouse.tenants.customer.create", ['warehouse' => $this->warehouse]);
+        // Set the connection to the tenant's schema
+        $this->tenantService->setConnection($this->warehouse);
+
+        $customer = TenantCustomer::on('tenant')->latest()->get()
+            ->mapWithKeys(function ($customer) {
+                return [$customer->id => $customer->name];
+            })
+            ->toArray();
+
+        return view("warehouse.tenants.customer.create", ['warehouse' => $this->warehouse, 'customers' => $customer]);
     }
 
 
@@ -294,7 +303,7 @@ class TenantCustomersController extends Controller
         return null; // If no address choice is made, or fields are not filled
     }
 
-    
+
     public function removeAddress(Request $request, string $id)
     {
         DB::beginTransaction();

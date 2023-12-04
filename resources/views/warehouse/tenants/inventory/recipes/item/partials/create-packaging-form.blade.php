@@ -15,6 +15,7 @@
                         <x-forms.input-error class="mt-2" :messages="$errors->get('name')" />
                     </div>
 
+
                     <div class="col-span-1">
                         <x-forms.input-label for="is_active" :value="__('Item Enabled?')" required />
                         <select id="is_active" name="is_active"
@@ -29,6 +30,25 @@
 
                 </div>
             </x-cards.body>
+        </x-cards.card>
+
+
+        <x-cards.card>
+            <x-cards.header-simple :title="'Item Pricing'" />
+            <x-cards.body>
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="col-span-1">
+                        <x-forms.input-label for="total_cost" :value="__('Cost Per Unit')" required />
+                        <x-forms.text-input id="total_cost" name="total_cost" type="number" :value="old('total_cost')"
+                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required step="0.01" />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('total_cost')" />
+                    </div>
+    
+                </div>
+            </x-cards.body>
+            <x-cards.footer>
+                *This is field is required.
+            </x-cards.footer>
         </x-cards.card>
 
         <x-cards.card>

@@ -82,7 +82,8 @@ class TenantRecipesController extends Controller
                 return [
                     $packaging->id => [
                         'name' => $packaging->name,
-                        'maxItems' => $packaging->quantity // Assuming 'max_items' is the field name
+                        'maxItems' => $packaging->max_item_quantity,
+                        'totalCost' => $packaging->total_cost
                     ]
                 ];
             })
@@ -132,7 +133,6 @@ class TenantRecipesController extends Controller
 
         try {
 
-
             // Set the connection to the tenant's schema
             $this->tenantService->setConnection($this->warehouse);
 
@@ -146,31 +146,72 @@ class TenantRecipesController extends Controller
                 // 'items.*.decoration' => 'required|exists:decorations,id',
             ]);
 
+
+            // Retrieve the cost of the selected box packaging
+            $boxPackagingCost = TenantRecipeBoxPackaging::on('tenant')
+                ->where('id', $validatedData['box_packaging'])
+                ->value('total_cost') ?? 0;
+
+            // dd($boxPackagingCost);
+
+            // Initialize total cost with the cost of the box packaging
+            $totalRecipeCost = $boxPackagingCost;
+
+
             // dd($validatedData);
             // Step 1. Create Recipe
             $recipe = TenantRecipes::on('tenant')->create([
                 'name' => $validatedData['name'],
                 'box_id' => $validatedData['box_packaging'],
-                'customer_id' => null
+                'customer_id' => null,
+                'total_cost' => $totalRecipeCost
             ]);
 
             // Step 2. Find the matching values and create theh connection
             foreach ($validatedData['items'] as $item) {
+                $totalLineCost = 0;
+
+                $itemCost = TenantInventory::on('tenant')
+                    ->where('id', $item['item'])
+                    ->value('total_cost') ?? 0;
+
+                $totalLineCost += $itemCost * $item['ounces']; // Assuming cost is per ounce
+
+                $packageCost = TenantRecipeItemPackagings::on('tenant')
+                    ->where('id', $item['packaging'])
+                    ->value('total_cost') ?? 0;
+
+                $totalLineCost += $packageCost;
+                // dd($totalLineCost);
+
                 TenantRecipeItems::on('tenant')->create([
                     'recipe_id' => $recipe->id,
                     'ounces' => $item['ounces'],
                     'item_id' => $item['item'],
                     'packaging_id' => $item['packaging'],
+                    'total_cost' => $totalLineCost,
                     'decoration_id' => null
                 ]);
+
+                $totalRecipeCost += $totalLineCost;
             }
+
+            // 1.4 is the multiplier (this needs to by based on the custoemr selected)
+            $totalRecipeCost *= 1.4;
+            // We want to ceil to the nearest 0.25 
+            $significance = 0.25;
+
+            $totalRecipeCost = (ceil($totalRecipeCost / $significance) * $significance);
+
+            $recipe->update(['total_cost' => $totalRecipeCost]);
+
 
 
             dispatch(new WriteAuditLogJob('created', 'Created recipe \'' . $recipe->name . '\'', $this->user->id, $this->warehouse));
 
 
             DB::commit();
-            return redirect()->route('warehouse.tenants.inventory.recipes.index')->with('success', "Successfully created a new Vendor");
+            return redirect()->route('warehouse.tenants.inventory.recipes.index')->with('success', "Successfully created a new Recipe");
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to create Recipe: ' . $e->getMessage()); // Log the error
@@ -219,4 +260,26 @@ class TenantRecipesController extends Controller
             return redirect()->back()->with('error', 'Failed to remove Vendor. Error: ' . $e->getMessage())->withInput();
         }
     }
+
+
+    public function show(Request $request, string $id)
+    {
+        // Set the connection to the tenant's schema
+        $this->tenantService->setConnection($this->warehouse);
+
+        // Find the Recipe in the current schema with related data
+        $recipe = TenantRecipes::on('tenant')
+            ->with(['recipeItems', 'boxPackaging'])
+            ->find($id);
+
+        if (! $recipe) {
+            return redirect()->back()->with('error', 'The requested recipe does not exist in this warehouse.');
+        }
+
+        // dd($recipe);
+
+        // If the customer exists and belongs to the warehouse, show the customer
+        return view('warehouse.tenants.inventory.recipes.show', ['recipe' => $recipe]);
+    }
+
 }

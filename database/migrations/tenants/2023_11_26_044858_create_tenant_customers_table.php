@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('payment_terms');
+            // $table->decimal('multiplier', 10, 2);
             $table->string('primary_email')->nullable();
             $table->text('notes')->nullable();
             $table->foreignIdFor(\App\Models\Warehouse\Tenants\TenantCustomer::class, 'parent_customer_id')

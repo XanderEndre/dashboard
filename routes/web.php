@@ -91,12 +91,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('create', [TenantInventoryController::class, 'create'])->name('create');
                 Route::post('create', [TenantInventoryController::class, 'store'])->name('store');
                 Route::delete('{id}', [TenantInventoryController::class, 'destroy'])->name('delete');
+                Route::get('{id}', [TenantInventoryController::class, 'show'])->name('show');
 
                 Route::prefix('recipes')->name('recipes.')->group(function () {
                     Route::get('/', [TenantRecipesController::class, 'index'])->name('index');
                     Route::get('create', [TenantRecipesController::class, 'create'])->name('create');
                     Route::post('create', [TenantRecipesController::class, 'store'])->name('store');
                     Route::delete('{id}', [TenantRecipesController::class, 'destroy'])->name('delete');
+                    Route::get('{id}', [TenantRecipesController::class, 'show'])->name('show');
 
                     Route::prefix('packaging/box')->name('box.')->group(function () {
                         Route::get('/', [TenantRecipeBoxPackagingController::class, 'index'])->name('index');
@@ -120,6 +122,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('create', [TenantOrdersController::class, 'create'])->name('create');
                 Route::post('create', [TenantOrdersController::class, 'store'])->name('store');
                 Route::delete('{id}', [TenantOrdersController::class, 'destroy'])->name('delete');
+                Route::get('{order}', [TenantOrdersController::class, 'show'])->name('show');
+
             });
         });
 

@@ -16,10 +16,10 @@
                     </div>
 
                     <div class="col-span-1">
-                        <x-forms.input-label for="quantity" :value="__('Max Item Quantity')" required />
-                        <x-forms.text-input id="quantity" name="quantity" type="text" :value="old('quantity')"
-                            placeholder="e.g., 3 Items" class="block w-full mt-1" required />
-                        <x-forms.input-error class="mt-2" :messages="$errors->get('quantity')" />
+                        <x-forms.input-label for="max_item_quantity" :value="__('Max Item Quantity')" required />
+                        <x-forms.text-input id="max_item_quantity" name="max_item_quantity" type="number"
+                            :value="old('max_item_quantity')" placeholder="e.g., 3 Items" class="block w-full mt-1" required />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('max_item_quantity')" />
                     </div>
 
                     <div class="col-span-1">
@@ -36,6 +36,42 @@
 
                 </div>
             </x-cards.body>
+        </x-cards.card>
+
+
+        <x-cards.card>
+            <x-cards.header-simple :title="'Item Pricing'" />
+            <x-cards.body>
+                <div class="grid md:grid-cols-2 grid-cols-1 gap-6">
+                    <div class="col-span-1">
+                        <x-forms.input-label for="box_cost" :value="__('Box Cost')" required />
+                        <x-forms.text-input id="box_cost" name="box_cost" type="number" :value="old('box_cost')"
+                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required step="0.01" />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('box_cost')" />
+                    </div>
+                    <div class="col-span-1">
+                        <x-forms.input-label for="packing_cost" :value="__('Packing Box Cost')" required />
+                        <x-forms.text-input id="packing_cost" name="packing_cost" type="number" :value="old('packing_cost')"
+                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required step="0.01" />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('packing_cost')" />
+                    </div>
+                    <div class="col-span-1">
+                        <x-forms.input-label for="shrink" :value="__('Shrink Cost')" required />
+                        <x-forms.text-input id="shrink" name="shrink" type="number" :value="old('shrink')"
+                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required step="0.01" />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('shrink')" />
+                    </div>
+                    <div class="col-span-1">
+                        <x-forms.input-label for="labor" :value="__('Labor Cost')" required />
+                        <x-forms.text-input id="labor" name="labor" type="number" :value="old('labor')"
+                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required step="0.01" />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('labor')" />
+                    </div>
+                </div>
+            </x-cards.body>
+            <x-cards.footer>
+                *This is field is required.
+            </x-cards.footer>
         </x-cards.card>
 
         <x-cards.card>

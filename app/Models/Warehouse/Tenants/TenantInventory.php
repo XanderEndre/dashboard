@@ -26,7 +26,12 @@ class TenantInventory extends Model
         'item_purchase_tax_option',
         'is_active',
         'vendor_id',
-        'sub_item_id'
+        'sub_item_id',
+        'package_size',
+        'case_cost',
+        'shipping_cost',
+        'reference_image',
+        'total_cost'
     ];
 
 

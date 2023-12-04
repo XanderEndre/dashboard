@@ -1,6 +1,6 @@
 <section>
 
-    <form method="post" action="{{ route('warehouse.tenants.inventory.store') }}">
+    <form method="post" action="{{ route('warehouse.tenants.inventory.store') }}" enctype="multipart/form-data">
         @csrf
         <x-cards.card>
             <x-cards.header :title="'Create an Item'" :description="'Enter the details of your new item'" />
@@ -32,14 +32,14 @@
                     </div>
 
 
-                    <div class="col-span-1">
+                    {{-- <div class="col-span-1">
                         <x-forms.input-label for="cost" :value="__('Item Cost')" required />
                         <x-forms.text-input id="cost" name="cost" type="text" :value="old('cost')"
                             placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required />
                         <x-forms.input-error class="mt-2" :messages="$errors->get('cost')" />
-                    </div>
+                    </div> --}}
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 md:col-span-1">
                         <x-forms.input-label for="is_active" :value="__('Item Enabled?')" required />
                         <select id="is_active" name="is_active"
                             class='mt-1 group w-full text-left flex justify-between items-center gap-2 border bg-white px-3 py-2 leading-6 rounded-lg border-gray-200 focus:outline-none focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:bg-gray-800 dark:border-gray-600 dark:focus:border-primary-500'>
@@ -50,22 +50,47 @@
                         </select>
                         <x-forms.input-error :messages="$errors->get('is_active')" class="mt-2" />
                     </div>
+                    <div class="col-span-1 md:col-span-1">
+                        <x-forms.input-label for="reference_image" :value="__('Upload Image')" />
+                        <input type="file" id="reference_image" name="reference_image"
+                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-primary-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100 dark:text-gray-400 dark:file:bg-primary-200 dark:file:text-primary-800 dark:hover:file:bg-primary-300" />
+                        {{-- <x-forms.text-input id="image" name="image" type="file" :value="old('image')"
+                            class="block w-full mt-1" required /> --}}
+                        <x-forms.input-error :messages="$errors->get('reference_image')" class="mt-2" />
+                    </div>
 
                 </div>
             </x-cards.body>
         </x-cards.card>
 
-        {{-- <x-cards.card>
-            <x-cards.header :title="'Item Category'" :description="'Select the category that this item belongs too'" />
+        <x-cards.card>
+            <x-cards.header-simple :title="'Item Pricing'" />
             <x-cards.body>
-                <x-forms.input-label for="selected_category_id" :value="__('Select Category')" />
-                <x-forms.select name="selected_category_id" :options="$categoryOptions" class="mt-1"></x-forms.select>
-                <x-forms.input-error class="mt-2" :messages="$errors->get('selected_category_id')" />
+                <div class="grid md:grid-cols-2 grid-cols-1 gap-6">
+                    <div class="col-span-1">
+                        <x-forms.input-label for="package_size" :value="__('Case Size (Ibs)')" required />
+                        <x-forms.text-input id="package_size" name="package_size" type="number" :value="old('package_size')"
+                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required step="0.01" />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('package_size')" />
+                    </div>
+                    <div class="col-span-1">
+                        <x-forms.input-label for="case_cost" :value="__('Cost/Case')" required />
+                        <x-forms.text-input id="case_cost" name="case_cost" type="number" :value="old('case_cost')"
+                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required step="0.01" />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('case_cost')" />
+                    </div>
+                    <div class="col-span-1">
+                        <x-forms.input-label for="shipping_cost" :value="__('Shipping Cost')" required />
+                        <x-forms.text-input id="shipping_cost" name="shipping_cost" type="number" :value="old('shipping_cost')"
+                            placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required step="0.01" />
+                        <x-forms.input-error class="mt-2" :messages="$errors->get('shipping_cost')" />
+                    </div>
+                </div>
             </x-cards.body>
             <x-cards.footer>
                 *This is field is required.
             </x-cards.footer>
-        </x-cards.card> --}}
+        </x-cards.card>
 
         @if (count($vendors) > 0)
             <x-cards.card>
@@ -101,7 +126,7 @@
             </x-cards.card>
         @endif
 
-        @if (count($items)> 0)
+        @if (count($items) > 0)
             <x-cards.card>
                 <x-cards.header :title="'Substitute Item'" :description="'Select the substitute item of this item'" />
                 <x-cards.body>

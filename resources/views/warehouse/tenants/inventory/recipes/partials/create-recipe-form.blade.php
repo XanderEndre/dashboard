@@ -14,12 +14,12 @@
                             placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required />
                         <x-forms.input-error class="mt-2" :messages="$errors->get('name')" />
                     </div>
-                    <div class="col-span-1">
-                        <x-forms.input-label for="name" :value="__('Customer Type')" required />
+                    {{-- <div class="col-span-1">
+                        <x-forms.input-label for="cyu" :value="__('Customer Type')" required />
                         <x-forms.text-input id="name" name="name" type="text" :value="old('name')"
                             placeholder="e.g., ABC Suppliers" class="block w-full mt-1" required />
                         <x-forms.input-error class="mt-2" :messages="$errors->get('name')" />
-                    </div>
+                    </div> --}}
                 </div>
             </x-cards.body>
         </x-cards.card>
@@ -49,13 +49,13 @@
                     <x-cards.card>
                         <x-cards.header :title="'Box Type'" :description="'Select the type of box that this recipe will use'" />
                         <x-cards.body>
-                            <x-tables.table :headers="['Ounces', 'Item', 'Item Packaging', 'Item Decoration']">
+                            <x-tables.table :headers="['Grams', 'Item', 'Item Packaging', 'Item Decoration']">
                                 <tbody>
                                     <template x-for="(item, index) in Number(maxItems)" :key="index">
                                         <tr>
                                             <x-tables.td>
                                                 <x-forms.text-input x-bind:id="'ounces' + index"
-                                                    x-bind:name="'items[' + index + '][ounces]'" type="text"
+                                                    x-bind:name="'items[' + index + '][ounces]'" type="number" step="0.01"
                                                     placeholder="e.g., 10" class="block w-full mt-1" required />
                                             </x-tables.td>
                                             <x-tables.td>

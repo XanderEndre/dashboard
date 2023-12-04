@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('tenant_recipe_item_packagings', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->decimal('total_cost', 10, 2);
             $table->timestamps();
             $table->softDeletes();
         });
