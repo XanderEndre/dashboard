@@ -10,7 +10,6 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
 
 
 </head>
@@ -133,7 +132,8 @@
     </div>
     <!-- END Hero Section: Image Side with Social Proof -->
 
-    </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+
 </body>
 
 </html>
