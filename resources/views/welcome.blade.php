@@ -82,25 +82,7 @@
                         Stop worrying about your warehouse management and let us know guide you through. Start
                         today and increase productivity by 150%.
                     </h2>
-                    <div class="flex items-center justify-center gap-2 pb-10 pt-5 leading-4 lg:justify-start">
-                        <div class="flex-none">
-                            <img src="https://cdn.tailkit.com/media/placeholders/avatar-iFgRcqHznqg-160x160.jpg"
-                                alt="User Avatar"
-                                class="inline-block h-10 w-10 rounded-full border-2 border-white dark:border-gray-900" />
-                            <img src="https://cdn.tailkit.com/media/placeholders/avatar-bY4GXQKfZrA-160x160.jpg"
-                                alt="User Avatar"
-                                class="-ml-6 inline-block h-10 w-10 rounded-full border-2 border-white dark:border-gray-900" />
-                            <img src="https://cdn.tailkit.com/media/placeholders/avatar-8PMvB4VyVXA-160x160.jpg"
-                                alt="User Avatar"
-                                class="-ml-6 inline-block h-10 w-10 rounded-full border-2 border-white dark:border-gray-900" />
-                            <img src="https://cdn.tailkit.com/media/placeholders/avatar-mEZ3PoFGs_k-160x160.jpg"
-                                alt="User Avatar"
-                                class="-ml-6 inline-block h-10 w-10 rounded-full border-2 border-white dark:border-gray-900" />
-                            <img src="https://cdn.tailkit.com/media/placeholders/avatar-euZ2n8dGUcQ-160x160.jpg"
-                                alt="User Avatar"
-                                class="-ml-6 inline-block h-10 w-10 rounded-full border-2 border-white dark:border-gray-900" />
-                        </div>
-                    </div>
+
                     <div class="flex flex-col justify-center gap-3 sm:flex-row sm:items-center lg:justify-start">
                         <a href="javascript:void(0)"
                             class="group inline-flex items-center justify-center gap-2 rounded-lg border border-blue-700 bg-blue-700 px-7 py-3.5 text-sm font-semibold text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90">
