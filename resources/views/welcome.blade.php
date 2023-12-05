@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>DashTrac</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -141,8 +141,8 @@
                 </div>
                 <div class="relative w-full">
                     <div class="aspect-h-1 aspect-w-1">
-                        <img src="https://cdn.tailkit.com/media/placeholders/photo-indie-hacker-desk-1024x1024.png"
-                            alt="Hero Image" />
+                        <x-application-logo class="text-gray-500 fill-current" />
+
                     </div>
                 </div>
             </div>

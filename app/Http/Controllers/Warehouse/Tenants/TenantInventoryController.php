@@ -99,7 +99,7 @@ class TenantInventoryController extends Controller
                 'item_valuation_method' => ['required', Rule::in(TenantInventory::$itemValuationMethod)],
                 'item_unit_of_measure' => ['required', Rule::in(TenantInventory::$itemUnitOfMeasure)],
                 'item_purchase_tax_option' => ['required', Rule::in(TenantInventory::$itemPurchaseTaxOptions)],
-                'reference_image' => 'required|file|mimes:png,jpeg,webp|max:2048',
+                'reference_image' => 'file|mimes:png,jpeg,webp|max:2048',
                 // 'sub_item_id' => 'exists:tenant.tenant_inventories,id',
                 // 'vendor_id' => 'exists:tenant.tenant_vendor,id',
                 'is_active' => 'required|boolean'
